@@ -376,6 +376,40 @@ import { runSandScript } from "./sandScript.js";
     hub.classList.add("open"); hub.setAttribute("aria-hidden","false"); showHubTab(tab);
     document.exitPointerLock?.();
   }
+  const hubSearch=document.getElementById("hubSearch");
+  hubSearch?.addEventListener("input",()=>{
+    const query=hubSearch.value.trim().toLocaleLowerCase("ru");
+    const cards=[...hubContent.querySelectorAll(".hub-card")];
+    cards.forEach(card=>{card.hidden=!!query&&!card.textContent.toLocaleLowerCase("ru").includes(query);});
+    const visible=cards.filter(card=>!card.hidden);
+    let empty=hubContent.querySelector(".hub-search-empty");
+    if(query&&cards.length&&!visible.length){
+      if(!empty){empty=document.createElement("p");empty.className="hub-search-empty";empty.textContent="Ничего не найдено. Попробуй другое название.";hubContent.append(empty);}
+    }else empty?.remove();
+  });
+  const themeToggle=document.getElementById("themeToggle");
+  function applyTheme(theme){
+    document.documentElement.dataset.theme=theme;
+    localStorage.setItem("sandboxTheme",theme);
+    if(themeToggle)themeToggle.textContent=theme==="dark"?"☼":"◐";
+    const meta=document.querySelector('meta[name="theme-color"]');
+    if(meta)meta.content=theme==="dark"?"#111713":"#f7faf7";
+  }
+  applyTheme(localStorage.getItem("sandboxTheme")||"light");
+  themeToggle?.addEventListener("click",()=>applyTheme(document.documentElement.dataset.theme==="dark"?"light":"dark"));
+  const mobilePanelButtons=[...document.querySelectorAll("[data-mobile-panel]")];
+  mobilePanelButtons.forEach(button=>button.addEventListener("click",()=>{
+    const panel=button.dataset.mobilePanel;
+    document.body.dataset.mobilePanel=panel;
+    mobilePanelButtons.forEach(item=>item.classList.toggle("active",item===button));
+    if(panel==="verity")document.getElementById("verityToggle")?.click();
+  }));
+  function syncViewportMode(){
+    document.body.classList.toggle("touch-layout",matchMedia("(max-width: 900px)").matches);
+    if(!matchMedia("(max-width: 900px)").matches){delete document.body.dataset.mobilePanel;}
+  }
+  syncViewportMode();
+  window.addEventListener("resize",syncViewportMode);
   function closeHub() { hub.classList.remove("open"); hub.setAttribute("aria-hidden","true"); }
   function showHubTab(tab) {
     hubTabs.forEach(b=>b.classList.toggle("active",b.dataset.hubTab===tab));
