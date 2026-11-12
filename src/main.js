@@ -1,3 +1,5 @@
+import { createVerity } from "./verity.js";
+
 (() => {
   const canvas = document.getElementById("renderCanvas");
   const status = document.getElementById("status");
@@ -86,6 +88,7 @@
   addStarterBuild();
 
   function setStatus(message) { status.textContent = message; }
+  const verity = createVerity(scene, camera, BABYLON, setStatus);
   function snap(v) { return Math.round(v / blockSize) * blockSize; }
   function performAction() {
     const ray = scene.createPickingRay(canvas.width / 2, canvas.height / 2, BABYLON.Matrix.Identity(), camera);
@@ -176,7 +179,12 @@
   });
   if (loadWorld()) setStatus("Сохранённый мир загружен");
 
+  let previousFrame = performance.now();
   engine.runRenderLoop(() => {
+    const now = performance.now();
+    const deltaSeconds = Math.min((now - previousFrame) / 1000, 0.05);
+    previousFrame = now;
+    verity.update(deltaSeconds);
     const forward = (mobileMove.forward ? 1 : 0) - (mobileMove.back ? 1 : 0);
     const side = (mobileMove.right ? 1 : 0) - (mobileMove.left ? 1 : 0);
     if (forward || side) {
