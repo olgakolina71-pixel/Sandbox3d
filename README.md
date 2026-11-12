@@ -51,3 +51,11 @@ npm run preview
 - Mobile controls use touch-safe pointer handling and safe-area spacing.
 - Bug reports and feature requests go to the public [GitHub Issues](https://github.com/olgakolina71-pixel/Sandbox3d/issues) page.
 - The update feed is a static release note file; automatic in-game updates are not installed.
+
+
+## MINI SANDBOX 3D NEXT GEN
+- Workspace modes: **Game** hides editor controls; **Studio** exposes creation and scripting tools.
+- MiniScript v0.1 is a small allow-listed command language; it does not evaluate JavaScript.
+- Commands: `say "text"`, `spawn material x y z`, `clear`, and `help`.
+- Verity calls the same-origin `/api/verity` Pages Function. It expects a Cloudflare Workers AI binding named `AI`; without it, the API reports that AI is not configured.
+- Public information pages: `/about.html` and `/guide.html`. SEO basics include canonical metadata, descriptions, Open Graph, `robots.txt`, and `sitemap.xml`.
