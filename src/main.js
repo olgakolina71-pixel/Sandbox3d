@@ -104,6 +104,9 @@ import { importGlbFile } from "./assetLibrary.js";
   grid.isPickable = false;
 
   const blocks = [];
+  const undoStack = [];
+  const redoStack = [];
+  const HISTORY_LIMIT = 100;
   let multiplayer = null;
   const blockSize = 1;
   let selectedMaterial = "grass";
@@ -112,6 +115,9 @@ import { importGlbFile } from "./assetLibrary.js";
   const keyState = {};
   const mobileMove = { forward: false, back: false, left: false, right: false };
 
+  function rememberAction(action) { undoStack.push(action); if (undoStack.length > HISTORY_LIMIT) undoStack.shift(); redoStack.length = 0; updateHistoryButtons(); }
+  function updateHistoryButtons() { const undo=document.getElementById("undoBtn"), redo=document.getElementById("redoBtn"); if(undo) undo.disabled=!undoStack.length; if(redo) redo.disabled=!redoStack.length; }
+  function removeBlockAt(x,y,z) { const target=blocks.find(b=>Math.abs(b.position.x-x)<0.01&&Math.abs(b.position.y-y)<0.01&&Math.abs(b.position.z-z)<0.01); if(!target)return false; blocks.splice(blocks.indexOf(target),1); target.dispose(); return true; }
   function makeBlock(x, y, z, materialName, initial = false) {
     const block = BABYLON.MeshBuilder.CreateBox("block", { size: blockSize }, scene);
     block.position.set(x, y, z);
@@ -152,6 +158,7 @@ import { importGlbFile } from "./assetLibrary.js";
       if (target && target.metadata && target.metadata.userBlock) {
         const i = blocks.indexOf(target); if (i >= 0) blocks.splice(i, 1);
         multiplayer.sendBlockRemove({x:target.position.x,y:target.position.y,z:target.position.z,material:target.metadata.materialName});
+        rememberAction({type:"remove",x:target.position.x,y:target.position.y,z:target.position.z,material:target.metadata.materialName});
         target.dispose(); setStatus("Блок удалён");
       } else setStatus("Здесь нет блока");
       return;
@@ -166,7 +173,7 @@ import { importGlbFile } from "./assetLibrary.js";
       setStatus("Слишком близко к игроку"); return;
     }
     const occupied = blocks.some(b => Math.abs(b.position.x-x)<0.1 && Math.abs(b.position.y-y)<0.1 && Math.abs(b.position.z-z)<0.1);
-    if (!occupied) { makeBlock(x, y, z, selectedMaterial); multiplayer.sendBlockAdd({x,y,z,material:selectedMaterial}); setStatus("Блок установлен: " + selectedMaterial); }
+    if (!occupied) { makeBlock(x, y, z, selectedMaterial); rememberAction({type:"add",x,y,z,material:selectedMaterial}); multiplayer.sendBlockAdd({x,y,z,material:selectedMaterial}); setStatus("Блок установлен: " + selectedMaterial); }
   }
 
   canvas.addEventListener("pointerdown", event => {
@@ -212,6 +219,18 @@ import { importGlbFile } from "./assetLibrary.js";
   });
   document.getElementById("mobileAction").addEventListener("click", performAction);
 
+  function applyHistory(action, undo) {
+    const shouldExist = (action.type === "add") !== undo;
+    if (shouldExist) {
+      const exists=blocks.some(b=>Math.abs(b.position.x-action.x)<0.01&&Math.abs(b.position.y-action.y)<0.01&&Math.abs(b.position.z-action.z)<0.01);
+      if(!exists){makeBlock(action.x,action.y,action.z,action.material);multiplayer.sendBlockAdd({x:action.x,y:action.y,z:action.z,material:action.material});}
+    } else if(removeBlockAt(action.x,action.y,action.z)) {
+      multiplayer.sendBlockRemove({x:action.x,y:action.y,z:action.z,material:action.material});
+    }
+  }
+  function undoAction() { const action=undoStack.pop(); if(!action)return; applyHistory(action,true); redoStack.push(action); updateHistoryButtons(); setStatus("Действие отменено"); }
+  function redoAction() { const action=redoStack.pop(); if(!action)return; applyHistory(action,false); undoStack.push(action); updateHistoryButtons(); setStatus("Действие повторено"); }
+
   function saveWorld() {
     const data = blocks.map(b => ({ x:b.position.x, y:b.position.y, z:b.position.z, material:b.metadata.materialName }));
     localStorage.setItem("miniSandboxWorld", JSON.stringify(data));
@@ -229,6 +248,26 @@ import { importGlbFile } from "./assetLibrary.js";
     } catch { return false; }
   }
 
+
+  document.getElementById("undoBtn").addEventListener("click",undoAction);
+  document.getElementById("redoBtn").addEventListener("click",redoAction);
+  window.addEventListener("keydown",e=>{if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==="z"){e.preventDefault();undoAction();}if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==="y"){e.preventDefault();redoAction();}});
+  function exportWorldFile() {
+    const payload={format:"mini-sandbox-world",version:1,createdAt:new Date().toISOString(),blocks:blocks.map(b=>({x:b.position.x,y:b.position.y,z:b.position.z,material:b.metadata.materialName}))};
+    const url=URL.createObjectURL(new Blob([JSON.stringify(payload,null,2)],{type:"application/json"}));
+    const a=document.createElement("a");a.href=url;a.download="mini-sandbox-world.json";a.click();URL.revokeObjectURL(url);setStatus("Файл мира экспортирован");
+  }
+  async function importWorldFile(file) {
+    if(!file||file.size>2*1024*1024)throw new Error("Файл мира должен быть меньше 2 МБ");
+    const parsed=JSON.parse(await file.text());const data=Array.isArray(parsed)?parsed:parsed.blocks;
+    if(!Array.isArray(data)||data.length>10000)throw new Error("Некорректный файл или слишком много блоков");
+    const safe=data.filter(b=>b&&[b.x,b.y,b.z].every(v=>Number.isFinite(Number(v)))&&Math.abs(Number(b.x))<=500&&Math.abs(Number(b.y))<=200&&Math.abs(Number(b.z))<=500).map(b=>({x:Number(b.x),y:Number(b.y),z:Number(b.z),material:colors[b.material]?b.material:"grass"}));
+    blocks.splice(0).forEach(b=>b.dispose());safe.forEach(b=>makeBlock(b.x,b.y,b.z,b.material));undoStack.length=0;redoStack.length=0;updateHistoryButtons();saveWorld();setStatus("Импортировано блоков: "+safe.length);
+  }
+  document.getElementById("exportWorldBtn").addEventListener("click",exportWorldFile);
+  const worldFileInput=document.getElementById("worldFileInput");
+  document.getElementById("importWorldBtn").addEventListener("click",()=>worldFileInput.click());
+  worldFileInput.addEventListener("change",async()=>{try{await importWorldFile(worldFileInput.files[0]);}catch(error){setStatus("Импорт не выполнен: "+error.message);}finally{worldFileInput.value="";}});
 
   const importModelBtn = document.getElementById("importModelBtn");
   const modelFileInput = document.getElementById("modelFileInput");
