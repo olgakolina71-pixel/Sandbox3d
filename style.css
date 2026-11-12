@@ -198,3 +198,5 @@ body{background:#091321}
 .studio-dock{top:auto;right:10px;bottom:150px;width:min(290px,calc(100vw - 20px));max-height:42dvh;padding:11px}.studio-dock-head strong{font-size:15px}#miniScriptEditor{min-height:90px;font-size:11px}
 .panel{top:70px;left:10px;width:min(165px,44vw);max-height:calc(100dvh - 230px);overflow:auto}#game[data-workspace="studio"] .hotbar{bottom:105px}.about-link{display:none}}
 @media(max-width:430px){#game[data-workspace="studio"] .panel{width:145px}#game[data-workspace="studio"] .studio-dock{width:calc(100vw - 170px);right:8px;bottom:145px}.studio-script-help{grid-template-columns:1fr}}
+
+#game[data-workspace="game"] .look-pad #mobileAction{display:none!important}
