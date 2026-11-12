@@ -30,3 +30,15 @@ npm run preview
 ## Notes
 - Verity currently uses local scripted responses; it is not connected to a remote AI model.
 - Player identity is a display name only. There is no account system yet.
+
+
+## 3D model import
+- The official Babylon.js glTF loader is included from the Babylon CDN.
+- Use **Импортировать 3D-модель** to add a local .glb or .gltf model to the current browser session.
+- Local model imports are not yet synchronized to multiplayer rooms or included in world saves.
+- Keep imported files below 50 MB for browser performance.
+
+## Free asset sources
+- [Poly Haven](https://polyhaven.com/) — CC0 models, PBR textures and HDRIs. See its [license](https://polyhaven.com/license).
+- [Kenney](https://kenney.nl/assets) — CC0 game asset packs. See [Kenney support/licensing](https://kenney.nl/support).
+- [Babylon.js official Asset Librarian](https://doc.babylonjs.com/toolsAndResources/assetLibrarian) — free assets; check each source asset's license and attribution before copying files into this repository.
