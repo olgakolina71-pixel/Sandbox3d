@@ -73,29 +73,23 @@ export function createVerity(scene, camera, BABYLON, setStatus) {
     messageTimer = 5;
     addMessage(text, "verity");
   }
-  function answer(raw) {
-    const text = raw.trim().toLowerCase();
-    if (!text) return;
-    addMessage(raw.trim(), "user");
-    if (text.includes("стой") || text.includes("останься")) {
-      following = false;
-      say("Хорошо! Подожду здесь 🙂");
-    } else if (text.includes("следуй") || text.includes("иди за мной")) {
-      following = true;
-      say("Иду за тобой! ✨");
-    } else if (text.includes("танц")) {
-      mood = "dance";
-      say("Уиии! Смотри мой танец! 😄");
-    } else if (text.includes("помощ") || text.includes("что умеешь") || text === "помоги") {
-      say("Я могу следовать за тобой, ждать, танцевать и подсказывать управление. Напиши «следуй за мной» или «стой».");
-    } else if (text.includes("привет") || text.includes("здравств")) {
-      say("Привет! Я Верити. Давай построим что-нибудь классное!");
-    } else if (text.includes("как дела")) {
-      say("Отлично! Здесь столько места для приключений 😁");
-    } else if (text.includes("построй") || text.includes("строить")) {
-      say("Выбери материал слева, наведи прицел на место и нажми ЛКМ. Я могу помочь советом!");
-    } else {
-      say("Я пока учусь понимать сообщения. Попробуй спросить про строительство или напиши «помощь».");
+  async function answer(raw) {
+    const prompt = raw.trim();
+    if (!prompt) return;
+    addMessage(prompt, "user");
+    const command = prompt.toLowerCase();
+    if (command.includes("стой") || command.includes("останься")) { following=false; say("Хорошо! Подожду здесь 🙂"); return; }
+    if (command.includes("следуй") || command.includes("иди за мной")) { following=true; say("Иду за тобой! ✨"); return; }
+    if (command.includes("танц")) { mood="dance"; say("Уиии! Смотри мой танец! 😄"); return; }
+    const pending=document.createElement("div"); pending.className="verity-message verity"; pending.textContent="Верити думает…"; messages.appendChild(pending); messages.scrollTop=messages.scrollHeight;
+    try {
+      const response=await fetch("/api/verity",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({message:prompt,context:{game:"MINI SANDBOX 3D"}})});
+      const data=await response.json(); pending.remove();
+      if(!response.ok) throw new Error(data.error||"AI unavailable");
+      say(data.reply||"Попробуй спросить ещё раз!");
+    } catch {
+      pending.remove();
+      say("ИИ пока не подключён. Серверный маршрут готов, но нужен секрет OPENAI_API_KEY в настройках Cloudflare Pages.");
     }
   }
 
