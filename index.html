@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#101827" />
+  <title>MINI SANDBOX 3D</title>
+  <link rel="stylesheet" href="./style.css" />
+</head>
+<body>
+  <div id="game">
+    <canvas id="renderCanvas" aria-label="3D game world"></canvas>
+    <header class="topbar">
+      <a class="brand" href="./">MINI <span>SANDBOX</span></a>
+      <div class="top-actions">
+        <button id="saveBtn" class="ui-button">Сохранить</button>
+        <button id="resetBtn" class="ui-button danger">Сбросить</button>
+      </div>
+    </header>
+    <aside class="panel">
+      <div class="panel-title">СТРОИТЕЛЬСТВО</div>
+      <div class="tool-row">
+        <button id="buildBtn" class="tool active" title="Строить">＋ <small>Строить</small></button>
+        <button id="removeBtn" class="tool" title="Удалять">－ <small>Удалять</small></button>
+      </div>
+      <div class="panel-title materials-title">МАТЕРИАЛЫ</div>
+      <div id="materials" class="materials">
+        <button class="material selected" data-material="grass"><i class="swatch grass"></i>Трава</button>
+        <button class="material" data-material="stone"><i class="swatch stone"></i>Камень</button>
+        <button class="material" data-material="wood"><i class="swatch wood"></i>Дерево</button>
+        <button class="material" data-material="sand"><i class="swatch sand"></i>Песок</button>
+        <button class="material" data-material="brick"><i class="swatch brick"></i>Кирпич</button>
+        <button class="material" data-material="neon"><i class="swatch neon"></i>Неон</button>
+      </div>
+      <div class="hint">ЛКМ — действие · WASD — движение · Space — прыжок</div>
+    </aside>
+    <div class="crosshair">＋</div>
+    <div id="status" class="status">Загрузка мира…</div>
+    <div class="mobile-controls">
+      <div class="move-pad">
+        <button data-move="forward">▲</button>
+        <div><button data-move="left">◀</button><button data-move="back">▼</button><button data-move="right">▶</button></div>
+      </div>
+      <div class="look-pad"><button id="jumpBtn">ПРЫЖОК</button><button id="mobileAction">СТРОИТЬ</button></div>
+    </div>
+    <div class="footer-note">MINI SANDBOX 3D <span>•</span> Creative mode</div>
+  </div>
+  <script src="https://cdn.babylonjs.com/babylon.js"></script>
+  <script src="./src/main.js"></script>
+</body>
+</html>
