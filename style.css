@@ -148,3 +148,11 @@ body{background:#091321}
 .model-import-btn:hover{border-color:#a4ffe1;background:linear-gradient(100deg,#267765,#20566b)}
 .model-import-row small{color:#8098b5;font-size:8px;text-align:center;letter-spacing:.4px}
 @media(max-width:700px){.model-import-row{margin-top:10px}.model-import-btn{font-size:9px;padding:9px 6px}}
+
+/* Editor history and portable world files */
+.editor-actions,.world-file-actions{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:10px}
+.editor-actions button,.world-file-actions button{min-width:0;border:1px solid #b7d4f02b;border-radius:9px;background:#172b42;color:#dcecff;padding:9px 5px;font-size:9px;font-weight:800;cursor:pointer}
+.editor-actions button:hover,.world-file-actions button:hover{border-color:#70eac1;background:#1b453e}
+.editor-actions button:disabled{opacity:.35;cursor:not-allowed}
+.world-file-actions button{background:#122b39;color:#a9f1d8}
+@media(max-width:700px){.editor-actions,.world-file-actions{gap:5px;margin-top:7px}.editor-actions button,.world-file-actions button{font-size:8px;padding:8px 3px}}
