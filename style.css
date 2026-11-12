@@ -485,3 +485,5 @@ body{background:var(--page);color:var(--text)}
 @media(min-width:701px) and (max-width:1100px){
  .panel{width:215px;left:12px}.topbar{padding:0 14px}.top-actions{gap:2px}.ui-button{padding:8px}
 }
+
+body.play-mode .mobile-editor-tabs{display:none!important}
