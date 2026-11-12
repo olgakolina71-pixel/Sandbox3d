@@ -10,7 +10,7 @@ Browser-based 3D creative sandbox built with Babylon.js and Vite.
 - Multiplayer rooms with live player positions, shared block edits and room chat
 - Mobile movement controls
 - Separate play and studio modes
-- MINI Script safe command interpreter (no eval)
+- SandScript safe command interpreter (no eval)
 - SEO metadata, SoftwareApplication structured data, robots.txt, sitemap.xml and About page
 
 ## Multiplayer architecture
@@ -56,8 +56,26 @@ npm run preview
 - The update feed is a static release note file; automatic in-game updates are not installed.
 
 
-## MINI Script
+## SandScript
 Commands: `place x y z material`, `remove x y z`, `say "text"`, `speed 0.1..1`, `teleport x y z`. Scripts use an allow-listed interpreter; arbitrary JavaScript is never evaluated.
 
 ## Verity AI
 The Pages Function at `/api/verity` calls Cloudflare Workers AI model `@cf/meta/llama-3.1-8b-instruct`. Configure a Workers AI binding named `AI` in Cloudflare Pages Settings → Functions → Bindings for production and preview, then redeploy. Inference is usage-billed by Cloudflare.
+
+
+## SandScript language
+SandScript is the built-in command language for world-building. It supports numeric variables, arithmetic expressions, bounded repeat blocks, placing and removing blocks, companion messages, movement speed and teleport commands. Scripts are limited to 300 source lines, 200 executed commands, 20 repeats and three nested repeat levels. The interpreter never evaluates arbitrary JavaScript.
+
+Example:
+
+```text
+let base = 2
+repeat 3 {
+  place base 0 0 grass
+  let base = base + 1
+}
+say "Моя первая постройка!"
+```
+
+## Player skins
+The hub includes a free cosmetic profile-skin selector. Current skins change the player's profile accent/avatar in the interface; they do not yet replace a visible 3D character model.
