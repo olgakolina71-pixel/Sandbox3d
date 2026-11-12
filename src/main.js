@@ -360,6 +360,56 @@ import { importGlbFile } from "./assetLibrary.js";
     }
   });
 
+  const workspaceRoot = document.getElementById("game");
+  const gameModeBtn = document.getElementById("gameModeBtn");
+  const studioModeBtn = document.getElementById("studioModeBtn");
+  function setWorkspaceMode(next) {
+    const mode = next === "game" ? "game" : "studio";
+    workspaceRoot.dataset.workspace = mode;
+    gameModeBtn.classList.toggle("active", mode === "game");
+    studioModeBtn.classList.toggle("active", mode === "studio");
+    gameModeBtn.setAttribute("aria-pressed", String(mode === "game"));
+    studioModeBtn.setAttribute("aria-pressed", String(mode === "studio"));
+    document.exitPointerLock?.();
+    setStatus(mode === "game" ? "Режим игры: исследуй свой мир" : "Режим студии: создавай и программируй");
+  }
+  gameModeBtn.addEventListener("click", () => setWorkspaceMode("game"));
+  studioModeBtn.addEventListener("click", () => setWorkspaceMode("studio"));
+  setWorkspaceMode("game");
+
+  const miniScriptEditor = document.getElementById("miniScriptEditor");
+  const miniScriptOutput = document.getElementById("miniScriptOutput");
+  document.getElementById("runMiniScript").addEventListener("click", () => {
+    const lines = miniScriptEditor.value.split(/\\r?\\n/);
+    const output = [];
+    let executed = 0;
+    for (let index = 0; index < lines.length; index++) {
+      const line = lines[index].trim();
+      if (!line || line.startsWith("#")) continue;
+      let match;
+      if ((match = line.match(/^say\\s+"([^"\\n]{0,180})"$/i))) {
+        setStatus(match[1]); output.push("say: " + match[1]); executed++;
+      } else if ((match = line.match(/^spawn\\s+(grass|stone|wood|sand|brick|neon)\\s+(-?\\d+(?:\\.\\d+)?)\\s+(-?\\d+(?:\\.\\d+)?)\\s+(-?\\d+(?:\\.\\d+)?)$/i))) {
+        const [, material, sx, sy, sz] = match;
+        const x=Number(sx), y=Number(sy), z=Number(sz);
+        if ([x,y,z].some(v=>!Number.isFinite(v)||Math.abs(v)>100)) { output.push("Строка "+(index+1)+": координаты должны быть в пределах ±100"); continue; }
+        if (blocks.length >= 5000) { output.push("Достигнут лимит 5000 блоков"); break; }
+        const exists=blocks.some(b=>Math.abs(b.position.x-x)<.01&&Math.abs(b.position.y-y)<.01&&Math.abs(b.position.z-z)<.01);
+        if (exists) { output.push("Строка "+(index+1)+": место занято"); continue; }
+        makeBlock(x,y,z,material.toLowerCase()); rememberAction({type:"add",x,y,z,material:material.toLowerCase()});
+        multiplayer.sendBlockAdd({x,y,z,material:material.toLowerCase()});
+        output.push("Создан блок "+material+" ("+x+", "+y+", "+z+")"); executed++;
+      } else if (/^clear$/i.test(line)) {
+        if (confirm("MiniScript очистит текущую постройку. Продолжить?")) { blocks.splice(0).forEach(b=>b.dispose()); output.push("Мир очищен"); executed++; }
+        else output.push("Очистка отменена");
+      } else if (/^help$/i.test(line)) output.push('Команды: say "текст" | spawn материал x y z | clear | help');
+      else output.push("Строка "+(index+1)+": неизвестная команда");
+    }
+    miniScriptOutput.textContent = "Выполнено команд: "+executed+"\\n"+(output.join("\\n") || "Нет команд для запуска.");
+    setStatus("MiniScript: выполнено команд "+executed);
+  });
+  document.getElementById("clearMiniScript").addEventListener("click", () => { miniScriptEditor.value = ""; miniScriptOutput.textContent = "Редактор очищен."; });
+
   const hub = document.getElementById("hubModal");
   const hubContent = document.getElementById("hubContent");
   const hubTitle = document.getElementById("hubTitle");
