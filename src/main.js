@@ -1,7 +1,7 @@
 import { createVerity } from "./verity.js";
 import { createMultiplayer } from "./multiplayer.js";
 import { importGlbFile } from "./assetLibrary.js";
-import { runMiniScript } from "./miniScript.js";
+import { runSandScript } from "./sandScript.js";
 
 (() => {
   const canvas = document.getElementById("renderCanvas");
@@ -152,7 +152,7 @@ import { runMiniScript } from "./miniScript.js";
   function setAppMode(next) { appMode = next === "play" ? "play" : "studio"; document.body.classList.toggle("play-mode", appMode === "play"); document.getElementById("playModeBtn").classList.toggle("active", appMode === "play"); document.getElementById("studioModeBtn").classList.toggle("active", appMode === "studio"); setStatus(appMode === "play" ? "Режим игры — исследуй свой мир!" : "Режим студии — инструменты редактирования доступны."); }
   const verity = createVerity(scene, camera, BABYLON, setStatus);
   const scriptInput=document.getElementById("miniScriptInput"),scriptOutput=document.getElementById("miniScriptOutput");
-  document.getElementById("runMiniScript").addEventListener("click",()=>{try{const result=runMiniScript(scriptInput.value,{place:(x,y,z,material)=>{if(blocks.some(b=>b.position.x===x&&b.position.y===y&&b.position.z===z))return;makeBlock(x,y,z,material);multiplayer.sendBlockAdd({x,y,z,material})},remove:(x,y,z)=>{const b=blocks.find(v=>v.position.x===x&&v.position.y===y&&v.position.z===z);if(!b)return false;const material=b.metadata.materialName;removeBlockAt(x,y,z);multiplayer.sendBlockRemove({x,y,z,material});return true},say:t=>verity.say(t),setSpeed:v=>{camera.speed=v},teleport:(x,y,z)=>camera.position.set(x,Math.max(1.5,y),z)});scriptOutput.textContent=result.output.join(" | ")||"Код выполнен. Команд: 0";setStatus("MINI Script: выполнено команд — "+result.executed)}catch(e){scriptOutput.textContent=e.message;setStatus("Ошибка MINI Script")}});
+  document.getElementById("runMiniScript").addEventListener("click",()=>{try{const result=runSandScript(scriptInput.value,{place:(x,y,z,material)=>{if(blocks.some(b=>b.position.x===x&&b.position.y===y&&b.position.z===z))return;makeBlock(x,y,z,material);multiplayer.sendBlockAdd({x,y,z,material})},remove:(x,y,z)=>{const b=blocks.find(v=>v.position.x===x&&v.position.y===y&&v.position.z===z);if(!b)return false;const material=b.metadata.materialName;removeBlockAt(x,y,z);multiplayer.sendBlockRemove({x,y,z,material});return true},say:t=>verity.say(t),setSpeed:v=>{camera.speed=v},teleport:(x,y,z)=>camera.position.set(x,Math.max(1.5,y),z)});scriptOutput.textContent=result.output.join(" | ")||"Код выполнен. Команд: 0";setStatus("SandScript: выполнено команд — "+result.executed)}catch(e){scriptOutput.textContent=e.message;setStatus("Ошибка MINI Script")}});
   function snap(v) { return Math.round(v / blockSize) * blockSize; }
   function performAction() {
     if (appMode !== "studio") { setStatus("В режиме игры строительство отключено."); return; }
@@ -379,11 +379,16 @@ import { runMiniScript } from "./miniScript.js";
   function closeHub() { hub.classList.remove("open"); hub.setAttribute("aria-hidden","true"); }
   function showHubTab(tab) {
     hubTabs.forEach(b=>b.classList.toggle("active",b.dataset.hubTab===tab));
-    const titles={home:"Главное меню",worlds:"Мои миры",shop:"Магазин",settings:"Настройки"};
+    const titles={home:"Главное меню",worlds:"Мои миры",shop:"Магазин",skins:"Персонаж и скины",settings:"Настройки"};
     hubTitle.textContent=titles[tab]||titles.home;
     if(tab==="home") { hubContent.innerHTML=`<div class="hub-hero"><div class="hub-hero-main"><h3>Твой мир. Твои правила.</h3><p>Строй, исследуй и создавай собственные пространства вместе с друзьями.</p><button class="hub-primary" data-hub-action="resume">▶ Продолжить игру</button></div><div class="hub-side-card"><div class="hub-stat"><span>Режим</span><b>Creative</b></div><div class="hub-stat"><span>Материалы</span><b>6 видов</b></div><div class="hub-stat"><span>Сохранение</span><b>На устройстве</b></div><button class="hub-secondary" data-hub-action="worlds">Открыть мои миры</button></div></div><section class="update-feed"><h3>Последние обновления</h3><div id="updateFeed">Проверяем версию…</div><a href="https://github.com/olgakolina71-pixel/Sandbox3d/issues" target="_blank" rel="noopener">Сообщить об ошибке / предложить идею ↗</a></section>`; checkForUpdates(); }
     if(tab==="worlds") hubContent.innerHTML=`<div class="hub-card-grid"><article class="hub-card"><div class="hub-card-art"></div><h3>Мой мир</h3><p>Локальное сохранение на этом устройстве</p><button class="hub-secondary" data-hub-action="load">Загрузить мир</button></article><article class="hub-card"><div class="hub-card-art" style="background:linear-gradient(135deg,#6c8ea8,#263f62)"></div><h3>Новый мир</h3><p>Начать чистую творческую площадку</p><button class="hub-secondary" data-hub-action="new">Создать мир</button></article></div>`;
     if(tab==="shop") hubContent.innerHTML=`<div class="hub-card-grid"><article class="hub-card"><div class="hub-card-art" style="background:linear-gradient(135deg,#6eaa5a,#315b3b)"></div><h3>Nature Pack</h3><p>Трава и природные оттенки</p><button class="hub-secondary" data-store-material="grass">Выбрать</button></article><article class="hub-card"><div class="hub-card-art" style="background:linear-gradient(135deg,#aab8c7,#566577)"></div><h3>Stoneworks</h3><p>Камень для крепостей и дорог</p><button class="hub-secondary" data-store-material="stone">Выбрать</button></article><article class="hub-card"><div class="hub-card-art" style="background:linear-gradient(135deg,#f4d078,#8f5b35)"></div><h3>Woodland</h3><p>Тёплые деревянные блоки</p><button class="hub-secondary" data-store-material="wood">Выбрать</button></article><article class="hub-card"><div class="hub-card-art" style="background:linear-gradient(135deg,#e5c98c,#a47d4e)"></div><h3>Desert</h3><p>Песочные материалы</p><button class="hub-secondary" data-store-material="sand">Выбрать</button></article><article class="hub-card"><div class="hub-card-art" style="background:linear-gradient(135deg,#dc8d75,#783e39)"></div><h3>Brick Set</h3><p>Кирпич для построек</p><button class="hub-secondary" data-store-material="brick">Выбрать</button></article><article class="hub-card"><div class="hub-card-art" style="background:linear-gradient(135deg,#adfff0,#0b9e86)"></div><h3>Neon Lab</h3><p>Светящиеся акценты</p><button class="hub-secondary" data-store-material="neon">Выбрать</button></article></div><p style="margin:12px 2px 0;color:#829ab6;font-size:10px">Это бесплатная витрина материалов — покупки и платежи не подключены.</p>`;
+    if(tab==="skins") {
+      const skins=[{id:"default",name:"Исследователь",tone:"#5b8fe8",rarity:"Стартовый"},{id:"mint",name:"Неоновый",tone:"#55e0b4",rarity:"Бесплатно"},{id:"sunset",name:"Закат",tone:"#ff9b70",rarity:"Бесплатно"},{id:"violet",name:"Космос",tone:"#a78bfa",rarity:"Бесплатно"},{id:"gold",name:"Золотой",tone:"#f4ca62",rarity:"Бесплатно"},{id:"ice",name:"Лёд",tone:"#8bdcf5",rarity:"Бесплатно"}];
+      const equipped=localStorage.getItem("sandboxSkin")||"default";
+      hubContent.innerHTML=`<div class="skin-intro"><div class="skin-big-avatar" id="skinPreview" style="--skin-tone:${(skins.find(s=>s.id===equipped)||skins[0]).tone}">☺</div><div><span class="hub-kicker">ТВОЙ АВАТАР</span><h3>Выбери свой стиль</h3><p>Все стартовые скины бесплатны. Выбор сохраняется на этом устройстве.</p></div></div><div class="skin-grid">${skins.map(s=>`<button class="skin-card ${s.id===equipped?"equipped":""}" type="button" data-skin-choice="${s.id}" style="--skin-tone:${s.tone}"><span class="skin-avatar">☺</span><b>${s.name}</b><small>${s.rarity}</small><em>${s.id===equipped?"Надет":"Выбрать"}</em></button>`).join("")}</div><p class="skin-footnote">Скины профиля — косметика интерфейса. 3D-модель игрока появится в отдельном обновлении.</p>`;
+    }
     if(tab==="settings") hubContent.innerHTML=`<div class="hub-setting"><div>Скорость движения<small>Регулирует скорость игрока</small></div><b id="speedValue">0.28</b><input id="speedRange" type="range" min="0.12" max="0.65" step="0.01" value="0.28"></div><div class="hub-setting"><div>Угол обзора<small>Ширина обзора камеры</small></div><b id="fovValue">0.80</b><input id="fovRange" type="range" min="0.55" max="1.25" step="0.01" value="0.80"></div><div class="hub-setting"><div>Качество рендера<small>Баланс качества и производительности</small></div><select id="qualitySelect" style="background:#102338;color:#eaf5ff;border:1px solid #ffffff22;border-radius:8px;padding:8px"><option value="1">Высокое</option><option value="1.5">Сбалансированное</option><option value="2">Производительность</option></select></div>`;
     if(tab==="settings") {
       const speed=document.getElementById("speedRange"), fov=document.getElementById("fovRange"), quality=document.getElementById("qualitySelect");
@@ -394,15 +399,15 @@ import { runMiniScript } from "./miniScript.js";
       quality.addEventListener("change",()=>engine.setHardwareScalingLevel(Number(quality.value)));
     }
   }
-  hubTabs.forEach(b=>b.addEventListener("click",()=>showHubTab(b.dataset.hubTab)));
+  hubTabs.forEach(b=>b.addEventListener("click",()=>showHubTab(b.dataset.hubTab)));\n  const savedSkin=localStorage.getItem("sandboxSkin")||"default";document.documentElement.dataset.skin=savedSkin;
   document.querySelectorAll("[data-hub-close]").forEach(b=>b.addEventListener("click",closeHub));
   document.getElementById("menuBtn").addEventListener("click",()=>openHub("home"));
   document.getElementById("worldsBtn").addEventListener("click",()=>openHub("worlds"));
   document.getElementById("shopBtn").addEventListener("click",()=>openHub("shop"));
-  document.getElementById("settingsBtn").addEventListener("click",()=>openHub("settings"));
+  document.getElementById("settingsBtn").addEventListener("click",()=>openHub("settings"));\n  openHub("home");
   hubContent.addEventListener("click",e=>{
     const action=e.target.closest("[data-hub-action]")?.dataset.hubAction;
-    const material=e.target.closest("[data-store-material]")?.dataset.storeMaterial;
+    const material=e.target.closest("[data-store-material]")?.dataset.storeMaterial;\n    const skin=e.target.closest("[data-skin-choice]")?.dataset.skinChoice;\n    if(skin){localStorage.setItem("sandboxSkin",skin);document.documentElement.dataset.skin=skin;showHubTab("skins");setStatus("Скин выбран: "+skin);}
     if(action==="resume") closeHub();
     if(action==="worlds") showHubTab("worlds");
     if(action==="load"){if(loadWorld())setStatus("Мир загружен");else setStatus("Сохранённого мира пока нет");closeHub();}
