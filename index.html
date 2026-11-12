@@ -88,8 +88,9 @@ say "Постройка готова!"</textarea><button id="runSandScript" type
       <div class="hub-backdrop" data-hub-close></div>
       <div class="hub-window">
         <header class="hub-window-head">
-          <div><span class="hub-kicker">MINI SANDBOX / HUB</span><h2 id="hubTitle">Главное меню</h2></div>
-          <button class="hub-close" type="button" data-hub-close aria-label="Закрыть">×</button>
+          <div class="hub-heading-copy"><span class="hub-kicker">SANDSCRIPT / PLAY</span><h2 id="hubTitle">Главная</h2></div>
+          <label class="hub-search" aria-label="Поиск"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.8" cy="10.8" r="6.8"/><path d="m16 16 5 5"/></svg><input id="hubSearch" type="search" placeholder="Поиск миров, игр и людей…" autocomplete="off"></label>
+          <div class="hub-head-actions"><button id="themeToggle" class="hub-theme-toggle" type="button" aria-label="Переключить тему">◐</button><button class="hub-close" type="button" data-hub-close aria-label="Закрыть">×</button></div>
         </header>
         <nav class="hub-tabs">
           <button type="button" data-hub-tab="home" class="active">Обзор</button>
@@ -101,6 +102,12 @@ say "Постройка готова!"</textarea><button id="runSandScript" type
         <div id="hubContent" class="hub-content"></div>
       </div>
     </section>
+    <nav class="mobile-editor-nav" aria-label="Инструменты редактора">
+      <button type="button" data-mobile-panel="tools">Инструменты</button>
+      <button type="button" data-mobile-panel="code">Код</button>
+      <button type="button" data-mobile-panel="verity">Верити</button>
+      <button type="button" data-mobile-panel="hide">Скрыть</button>
+    </nav>
     <div class="mobile-controls">
       <div class="move-pad">
         <button data-move="forward">▲</button>
