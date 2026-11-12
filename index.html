@@ -13,6 +13,10 @@
     <header class="topbar">
       <a class="brand" href="./"><span class="brand-icon">M</span><span class="brand-copy">MINI <b>SANDBOX</b><small>CREATIVE WORLDS</small></span></a>
       <div class="top-actions">
+        <button id="menuBtn" class="ui-button hub-nav" type="button">⌂ Меню</button>
+        <button id="worldsBtn" class="ui-button hub-nav" type="button">▦ Миры</button>
+        <button id="shopBtn" class="ui-button hub-nav" type="button">✦ Магазин</button>
+        <button id="settingsBtn" class="ui-button hub-nav" type="button">⚙</button>
         <button id="roomToggle" class="ui-button room-toggle" type="button">🌐 Мультиплеер</button>
         <button id="verityToggle" class="ui-button verity-toggle" type="button">☺ Верити</button>
         <button id="saveBtn" class="ui-button">Сохранить</button>
@@ -63,6 +67,23 @@
     <div class="crosshair">＋</div>
     <div id="status" class="status"><span class="status-dot"></span>Загрузка мира…</div>
     <nav class="hotbar" aria-label="Быстрый выбор материалов"><div class="hotbar-label">БЫСТРЫЙ ДОСТУП</div><div class="hotbar-slots"><button class="hotbar-slot active" data-hotbar="grass"><i class="swatch grass"></i><small>1</small></button><button class="hotbar-slot" data-hotbar="stone"><i class="swatch stone"></i><small>2</small></button><button class="hotbar-slot" data-hotbar="wood"><i class="swatch wood"></i><small>3</small></button><button class="hotbar-slot" data-hotbar="sand"><i class="swatch sand"></i><small>4</small></button><button class="hotbar-slot" data-hotbar="brick"><i class="swatch brick"></i><small>5</small></button><button class="hotbar-slot" data-hotbar="neon"><i class="swatch neon"></i><small>6</small></button></div></nav>
+
+    <section id="hubModal" class="hub-modal" aria-label="Главное меню" aria-hidden="true">
+      <div class="hub-backdrop" data-hub-close></div>
+      <div class="hub-window">
+        <header class="hub-window-head">
+          <div><span class="hub-kicker">MINI SANDBOX / HUB</span><h2 id="hubTitle">Главное меню</h2></div>
+          <button class="hub-close" type="button" data-hub-close aria-label="Закрыть">×</button>
+        </header>
+        <nav class="hub-tabs">
+          <button type="button" data-hub-tab="home" class="active">Обзор</button>
+          <button type="button" data-hub-tab="worlds">Мои миры</button>
+          <button type="button" data-hub-tab="shop">Магазин</button>
+          <button type="button" data-hub-tab="settings">Настройки</button>
+        </nav>
+        <div id="hubContent" class="hub-content"></div>
+      </div>
+    </section>
     <div class="mobile-controls">
       <div class="move-pad">
         <button data-move="forward">▲</button>
