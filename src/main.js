@@ -262,8 +262,7 @@ import { importGlbFile } from "./assetLibrary.js";
     return btoa(binary).replace(/\\+/g, "-").replace(/\\//g, "_").replace(/=+$/g, "");
   }
   function decodeWorldFromUrl(value) {
-    const base64 = value.replace(/-/g, "+").replace(/_/g, "/");
-    const binary = atob(base64 + "=".repeat((4 - base64.length % 4) % 4));
+    const binary = atob(value);
     const bytes = Uint8Array.from(binary, char => char.charCodeAt(0));
     return JSON.parse(new TextDecoder().decode(bytes));
   }
