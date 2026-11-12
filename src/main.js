@@ -369,12 +369,6 @@ import { runSandScript } from "./sandScript.js";
   });
 
   const hub = document.getElementById("hubModal");
-  const themeToggle = document.getElementById("themeToggle");
-  const savedTheme = localStorage.getItem("sandboxTheme") || "light";
-  document.documentElement.dataset.theme = savedTheme;
-  function setTheme(theme) { const next = theme === "dark" ? "dark" : "light"; document.documentElement.dataset.theme = next; localStorage.setItem("sandboxTheme", next); if (themeToggle) themeToggle.textContent = next === "dark" ? "☼" : "◐"; }
-  setTheme(savedTheme);
-  themeToggle?.addEventListener("click", () => setTheme(document.documentElement.dataset.theme === "dark" ? "light" : "dark"));
   document.querySelectorAll("[data-mobile-editor-tab]").forEach(button => button.addEventListener("click", () => { const tab = button.dataset.mobileEditorTab; const panel = document.querySelector(".panel"); panel.dataset.mobileTab = tab; document.querySelectorAll("[data-mobile-editor-tab]").forEach(item => item.classList.toggle("active", item === button)); if (tab === "code") document.querySelector(".script-workbench")?.setAttribute("open", ""); }));
   document.querySelectorAll("[data-app-nav]").forEach(button => button.addEventListener("click", () => { const target = button.dataset.appNav; document.querySelectorAll("[data-app-nav]").forEach(item => item.classList.toggle("active", item === button)); if (target === "home" || target === "profile") openHub(target === "profile" ? "skins" : "home"); if (target === "play") setAppMode("play"); if (target === "studio") setAppMode("studio"); }));
   const hubContent = document.getElementById("hubContent");
@@ -433,7 +427,7 @@ import { runSandScript } from "./sandScript.js";
     }
     if(tab==="settings") hubContent.innerHTML=`<div class="hub-setting"><div>Оформление<small>Светлая или тёмная тема</small></div><select id="themeSelect" style="background:var(--surface-2);color:var(--text);border:1px solid var(--line);border-radius:8px;padding:8px"><option value="light">Светлая</option><option value="dark">Тёмная</option></select></div><div class="hub-setting"><div>Скорость движения<small>Регулирует скорость игрока</small></div><b id="speedValue">0.28</b><input id="speedRange" type="range" min="0.12" max="0.65" step="0.01" value="0.28"></div><div class="hub-setting"><div>Угол обзора<small>Ширина обзора камеры</small></div><b id="fovValue">0.80</b><input id="fovRange" type="range" min="0.55" max="1.25" step="0.01" value="0.80"></div><div class="hub-setting"><div>Качество рендера<small>Баланс качества и производительности</small></div><select id="qualitySelect" style="background:#102338;color:#eaf5ff;border:1px solid #ffffff22;border-radius:8px;padding:8px"><option value="1">Высокое</option><option value="1.5">Сбалансированное</option><option value="2">Производительность</option></select></div>`;
     if(tab==="settings") {
-      const themeSelect=document.getElementById("themeSelect"); themeSelect.value=document.documentElement.dataset.theme; themeSelect.addEventListener("change",()=>setTheme(themeSelect.value));
+      const themeSelect=document.getElementById("themeSelect"); themeSelect.value=document.documentElement.dataset.theme; themeSelect.addEventListener("change",()=>applyTheme(themeSelect.value));
       const speed=document.getElementById("speedRange"), fov=document.getElementById("fovRange"), quality=document.getElementById("qualitySelect");
       speed.value=camera.speed;document.getElementById("speedValue").textContent=Number(camera.speed).toFixed(2);
       fov.value=camera.fov;document.getElementById("fovValue").textContent=Number(camera.fov).toFixed(2);
@@ -443,7 +437,6 @@ import { runSandScript } from "./sandScript.js";
     }
   }
   hubTabs.forEach(b=>b.addEventListener("click",()=>showHubTab(b.dataset.hubTab)));
-  const hubSearch = document.getElementById("hubSearch");
   const hubSearchResults = document.getElementById("hubSearchResults");
   const searchItems = [{tab:"worlds",title:"Мои миры",detail:"Открыть сохранённые миры",keys:"миры миры сохранения worlds"},{tab:"shop",title:"Магазин",detail:"Материалы и наборы",keys:"магазин блоки материалы shop store"},{tab:"skins",title:"Скины и персонаж",detail:"Настроить внешний вид",keys:"скины аватар персонаж профиль skins"},{tab:"settings",title:"Настройки",detail:"Тема, скорость и качество",keys:"настройки тема светлая тёмная settings"},{tab:"home",title:"Главная",detail:"Обзор платформы",keys:"главная home"},{tab:"studio",title:"Редактор SandScript",detail:"Открыть студию создания миров",keys:"редактор студия код скрипт sandscript studio"},{tab:"play",title:"Играть",detail:"Перейти в игровой режим",keys:"играть игра play"}];
   function renderSearchResults(query) { const q=query.trim().toLocaleLowerCase("ru"); if(!q){hubSearchResults.hidden=true;hubSearchResults.innerHTML="";return;} const matches=searchItems.filter(item=>(item.title+" "+item.detail+" "+item.keys).toLocaleLowerCase("ru").includes(q)); hubSearchResults.hidden=false; hubSearchResults.innerHTML=matches.length?matches.map(item=>`<button class="hub-search-result" type="button" data-search-target="${item.tab}"><strong>${item.title}</strong><small>${item.detail}</small></button>`).join(""):`<div class="hub-empty">Ничего не найдено. Попробуй другой запрос.</div>`; }
