@@ -33,21 +33,55 @@ import { createMultiplayer } from "./multiplayer.js";
 
   const mats = {};
   const colors = { grass: "#65a84c", stone: "#929ba8", wood: "#95613a", sand: "#d8bd78", brick: "#ad5947", neon: "#50f5d0" };
-  Object.entries(colors).forEach(([key, hex]) => {
-    const mat = new BABYLON.StandardMaterial(key + "Material", scene);
-    mat.diffuseColor = BABYLON.Color3.FromHexString(hex);
-    mat.specularColor = key === "neon" ? new BABYLON.Color3(0.8, 1, 1) : new BABYLON.Color3(0.12, 0.12, 0.12);
-    if (key === "neon") { mat.emissiveColor = BABYLON.Color3.FromHexString("#1a8f7a"); }
-    const texture = new BABYLON.DynamicTexture(key + "Texture", { width: 128, height: 128 }, scene, false);
+  function makeSurfaceTexture(name, base, size = 512) {
+    const texture = new BABYLON.DynamicTexture(name, { width: size, height: size }, scene, false);
     const ctx = texture.getContext();
-    ctx.fillStyle = hex; ctx.fillRect(0, 0, 128, 128);
-    let seed = key.split("").reduce((n, c) => n + c.charCodeAt(0), 17);
-    const rand = () => { seed = (seed * 9301 + 49297) % 233280; return seed / 233280; };
-    if (key === "wood") { for (let y=8;y<128;y+=18) { ctx.strokeStyle="rgba(45,25,10,.28)";ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(0,y);ctx.bezierCurveTo(40,y-5,85,y+5,128,y);ctx.stroke(); } }
-    else if (key === "brick") { for(let y=0;y<128;y+=32){for(let x=(y/32%2)*32;x<128;x+=64){ctx.strokeStyle="rgba(50,20,15,.35)";ctx.lineWidth=3;ctx.strokeRect(x,y,64,32)}} }
-    else { for(let i=0;i<230;i++){const s=2+rand()*8;ctx.fillStyle=rand()>.5?"rgba(255,255,255,.10)":"rgba(0,0,0,.12)";ctx.fillRect(rand()*128,rand()*128,s,s)} }
+    ctx.fillStyle = base; ctx.fillRect(0, 0, size, size);
+    let seed = name.split("").reduce((n, c) => n + c.charCodeAt(0), 193);
+    const rand = () => { seed = (seed * 1664525 + 1013904223) >>> 0; return seed / 4294967296; };
+    if (name.startsWith("grass")) {
+      for (let i=0;i<5200;i++) { const x=rand()*size,y=rand()*size,r=1+rand()*3.5;ctx.fillStyle=rand()>.5?"rgba(202,235,126,.22)":"rgba(20,66,31,.24)";ctx.beginPath();ctx.ellipse(x,y,r,r*1.8,rand()*3,0,Math.PI*2);ctx.fill(); }
+      for(let i=0;i<80;i++){const x=rand()*size,y=rand()*size;ctx.strokeStyle="rgba(32,91,40,.25)";ctx.lineWidth=1.5;ctx.beginPath();ctx.moveTo(x,y);ctx.lineTo(x+rand()*10-5,y-5-rand()*12);ctx.stroke();}
+    } else if (name.startsWith("stone")) {
+      for(let i=0;i<3600;i++){const x=rand()*size,y=rand()*size,r=1+rand()*5;ctx.fillStyle=rand()>.5?"rgba(255,255,255,.13)":"rgba(25,35,48,.16)";ctx.beginPath();ctx.arc(x,y,r,0,Math.PI*2);ctx.fill();}
+      for(let i=0;i<24;i++){let x=rand()*size,y=rand()*size;ctx.strokeStyle="rgba(35,45,58,.22)";ctx.lineWidth=1+rand()*2;ctx.beginPath();ctx.moveTo(x,y);for(let j=0;j<4;j++){x+=rand()*38-19;y+=rand()*38-19;ctx.lineTo(x,y);}ctx.stroke();}
+    } else if (name.startsWith("wood")) {
+      for(let i=0;i<100;i++){const y=rand()*size;ctx.strokeStyle=rand()>.5?"rgba(47,24,9,.25)":"rgba(255,208,143,.2)";ctx.lineWidth=1+rand()*4;ctx.beginPath();ctx.moveTo(0,y);ctx.bezierCurveTo(size*.3,y-10,size*.7,y+12,size,y+rand()*8-4);ctx.stroke();}
+      for(let i=0;i<14;i++){const x=rand()*size,y=rand()*size;ctx.strokeStyle="rgba(45,22,9,.3)";ctx.lineWidth=2;ctx.beginPath();ctx.ellipse(x,y,8+rand()*22,3+rand()*8,0,0,Math.PI*2);ctx.stroke();}
+    } else if (name.startsWith("sand")) {
+      for(let i=0;i<160;i++){const y=rand()*size;ctx.strokeStyle=rand()>.5?"rgba(255,244,199,.25)":"rgba(130,96,48,.14)";ctx.lineWidth=1+rand()*3;ctx.beginPath();ctx.moveTo(0,y);ctx.bezierCurveTo(size*.3,y-18,size*.7,y+18,size,y+rand()*8-4);ctx.stroke();}
+      for(let i=0;i<4200;i++){ctx.fillStyle=rand()>.5?"rgba(255,255,255,.15)":"rgba(112,83,44,.12)";ctx.fillRect(rand()*size,rand()*size,1+rand()*2,1+rand()*2);}
+    } else if (name.startsWith("brick")) {
+      const w=size/4,h=size/8;
+      for(let y=0;y<size;y+=h){const offset=(Math.round(y/h)%2)*w/2;for(let x=-w;x<size+w;x+=w){ctx.fillStyle="rgba(55,20,16,.34)";ctx.fillRect(x+offset,y,w-3,h-3);ctx.fillStyle="rgba(255,193,153,.14)";ctx.fillRect(x+offset+2,y+2,w-8,2);}}
+      for(let i=0;i<1000;i++){ctx.fillStyle=rand()>.5?"rgba(255,220,185,.10)":"rgba(55,20,15,.10)";ctx.fillRect(rand()*size,rand()*size,2+rand()*8,1+rand()*3);}
+    } else {
+      ctx.strokeStyle="rgba(220,255,249,.5)";ctx.lineWidth=3;
+      for(let i=0;i<12;i++){const x=rand()*size,y=rand()*size;ctx.strokeRect(x,y,18+rand()*54,18+rand()*54);}
+      for(let i=0;i<70;i++){ctx.fillStyle="rgba(255,255,255,.7)";ctx.fillRect(rand()*size,rand()*size,2+rand()*5,2+rand()*5);}
+    }
     texture.update(); texture.wrapU = BABYLON.Texture.WRAP_ADDRESSMODE; texture.wrapV = BABYLON.Texture.WRAP_ADDRESSMODE;
-    mat.diffuseTexture = texture;
+    texture.anisotropicFilteringLevel = 8;
+    return texture;
+  }
+  function makeNormalMap(sourceTexture, name) {
+    const size = 128, normal = new BABYLON.DynamicTexture(name, {width:size,height:size}, scene, false);
+    const src = sourceTexture.getContext().getImageData(0,0,sourceTexture.getSize().width,sourceTexture.getSize().height);
+    const dst = normal.getContext().createImageData(size,size);
+    const sw=sourceTexture.getSize().width, sh=sourceTexture.getSize().height;
+    const lum=(x,y)=>{const i=(Math.max(0,Math.min(sh-1,y))*sw+Math.max(0,Math.min(sw-1,x)))*4;return (src.data[i]*.3+src.data[i+1]*.59+src.data[i+2]*.11)/255;};
+    for(let y=0;y<size;y++)for(let x=0;x<size;x++){const sx=Math.floor(x/size*sw),sy=Math.floor(y/size*sh),dx=(lum(sx+2,sy)-lum(sx-2,sy))*2,dy=(lum(sx,sy+2)-lum(sx,sy-2))*2;let nx=-dx,ny=-dy,nz=1.0,len=Math.hypot(nx,ny,nz);const i=(y*size+x)*4;dst.data[i]=(nx/len*.5+.5)*255;dst.data[i+1]=(ny/len*.5+.5)*255;dst.data[i+2]=(nz/len*.5+.5)*255;dst.data[i+3]=255;}
+    normal.getContext().putImageData(dst,0,0);normal.update();return normal;
+  }
+  Object.entries(colors).forEach(([key, hex]) => {
+    const albedo = makeSurfaceTexture(key + "Surface", hex);
+    const mat = new BABYLON.PBRMaterial(key + "Material", scene);
+    mat.albedoTexture = albedo;
+    mat.bumpTexture = makeNormalMap(albedo, key + "Normal");
+    mat.roughness = key === "neon" ? 0.28 : key === "wood" ? 0.72 : 0.9;
+    mat.metallic = key === "neon" ? 0.35 : 0.02;
+    mat.useRoughnessFromMetallicTextureAlpha = false;
+    if (key === "neon") { mat.emissiveColor = BABYLON.Color3.FromHexString("#168f7c"); mat.emissiveIntensity = 0.65; }
     mats[key] = mat;
   });
 
@@ -148,11 +182,15 @@ import { createMultiplayer } from "./multiplayer.js";
     document.getElementById("mobileAction").textContent = mode === "build" ? "СТРОИТЬ" : "УДАЛИТЬ";
     setStatus(mode === "build" ? "Режим строительства" : "Режим удаления");
   }
-  document.querySelectorAll(".material").forEach(btn => btn.addEventListener("click", () => {
-    selectedMaterial = btn.dataset.material;
-    document.querySelectorAll(".material").forEach(b => b.classList.toggle("selected", b === btn));
-    setStatus("Материал: " + btn.textContent.trim());
-  }));
+  function selectMaterial(name) {
+    selectedMaterial = name;
+    document.querySelectorAll(".material").forEach(b => b.classList.toggle("selected", b.dataset.material === name));
+    document.querySelectorAll(".hotbar-slot").forEach(b => b.classList.toggle("active", b.dataset.hotbar === name));
+    setStatus("Материал: " + name);
+  }
+  document.querySelectorAll(".material").forEach(btn => btn.addEventListener("click", () => selectMaterial(btn.dataset.material)));
+  document.querySelectorAll(".hotbar-slot").forEach(btn => btn.addEventListener("click", () => selectMaterial(btn.dataset.hotbar)));
+  window.addEventListener("keydown", e => { const n = Number(e.key); if (n >= 1 && n <= 6) { const slot = document.querySelector(`.hotbar-slot[data-hotbar="${["grass","stone","wood","sand","brick","neon"][n-1]}"]`); if (slot) selectMaterial(slot.dataset.hotbar); } });
 
   window.addEventListener("keydown", e => {
     keyState[e.code] = true;
