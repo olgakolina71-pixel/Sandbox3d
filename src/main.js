@@ -1,5 +1,6 @@
 import { createVerity } from "./verity.js";
 import { createMultiplayer } from "./multiplayer.js";
+import { importGlbFile } from "./assetLibrary.js";
 
 (() => {
   const canvas = document.getElementById("renderCanvas");
@@ -227,6 +228,29 @@ import { createMultiplayer } from "./multiplayer.js";
       return true;
     } catch { return false; }
   }
+
+
+  const importModelBtn = document.getElementById("importModelBtn");
+  const modelFileInput = document.getElementById("modelFileInput");
+  importModelBtn.addEventListener("click", () => modelFileInput.click());
+  modelFileInput.addEventListener("change", async () => {
+    const file = modelFileInput.files && modelFileInput.files[0];
+    if (!file) return;
+    importModelBtn.disabled = true;
+    importModelBtn.textContent = "Загрузка модели…";
+    try {
+      const model = await importGlbFile(file, scene, BABYLON, camera);
+      setStatus("3D-модель добавлена: " + file.name);
+      model.root.metadata = { importedModel: true, localOnly: true };
+    } catch (error) {
+      console.error("Model import failed:", error);
+      setStatus("Не удалось загрузить модель: " + (error.message || "ошибка формата"));
+    } finally {
+      importModelBtn.disabled = false;
+      importModelBtn.textContent = "⬆ Импортировать 3D-модель";
+      modelFileInput.value = "";
+    }
+  });
 
   const hub = document.getElementById("hubModal");
   const hubContent = document.getElementById("hubContent");
