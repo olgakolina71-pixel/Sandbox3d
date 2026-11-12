@@ -47,6 +47,7 @@ export function createVerity(scene, camera, BABYLON, setStatus) {
 
   root.position.copyFrom(camera.position);
   root.position.y -= 0.45;
+  let hoverBaseY = root.position.y;
   let following = true;
   let mood = "happy";
   let messageTimer = 0;
@@ -122,11 +123,12 @@ export function createVerity(scene, camera, BABYLON, setStatus) {
       const target = camera.position.add(forward.scale(2.0)).add(right.scale(1.35));
       target.y = Math.max(1.25, camera.position.y - 0.35);
       root.position = BABYLON.Vector3.Lerp(root.position, target, Math.min(1, deltaSeconds * 3.2));
+      hoverBaseY = target.y;
     }
     const toCamera = camera.position.subtract(root.position);
-    root.rotation.y = Math.atan2(toCamera.x, toCamera.z);
+    root.rotation.y = Math.atan2(-toCamera.x, -toCamera.z);
     const t = performance.now() * 0.001;
-    root.position.y += Math.sin(t * (mood === "dance" ? 9 : 2.6)) * deltaSeconds * (mood === "dance" ? 1.1 : 0.22);
+    root.position.y = BABYLON.Scalar.Lerp(root.position.y, hoverBaseY, Math.min(1, deltaSeconds * 3)) + Math.sin(t * (mood === "dance" ? 9 : 2.6)) * (mood === "dance" ? 0.12 : 0.055);
     root.rotation.z = mood === "dance" ? Math.sin(t * 9) * 0.22 : Math.sin(t * 2) * 0.035;
     if (mood === "dance" && Math.floor(t) % 4 === 0) mood = "happy";
     if (messageTimer > 0) {
