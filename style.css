@@ -156,3 +156,22 @@ body{background:#091321}
 .editor-actions button:disabled{opacity:.35;cursor:not-allowed}
 .world-file-actions button{background:#122b39;color:#a9f1d8}
 @media(max-width:700px){.editor-actions,.world-file-actions{gap:5px;margin-top:7px}.editor-actions button,.world-file-actions button{font-size:8px;padding:8px 3px}}
+
+/* Sharing, update feed and touch-safe mobile layout */
+.world-file-actions{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+.world-file-actions button{min-height:36px}
+.update-feed{margin-top:18px;padding:14px;border:1px solid #ffffff1c;border-radius:13px;background:#0d1d30;color:#dcecff}
+.update-feed h3{margin:0 0 9px;font-size:13px;color:#75e9c2}
+.update-feed strong{font-size:12px}
+.update-feed p,.update-feed li{font-size:11px;line-height:1.5;color:#aebfd5}
+.update-feed ul{padding-left:18px;margin:7px 0}
+.update-feed a{display:inline-block;margin-top:7px;color:#7fdcff;font-size:11px;text-decoration:none}
+.update-feed a:hover{text-decoration:underline}
+.mobile-controls button{touch-action:none;user-select:none;-webkit-user-select:none}
+@media(max-width:700px){
+  #shareWorldBtn{grid-column:1/-1}
+  .panel{max-height:calc(100dvh - 210px);overflow-y:auto;overscroll-behavior:contain}
+  .topbar{padding-top:env(safe-area-inset-top)}
+  .mobile-controls{padding-bottom:env(safe-area-inset-bottom)}
+  .hotbar{bottom:calc(12px + env(safe-area-inset-bottom))}
+}
