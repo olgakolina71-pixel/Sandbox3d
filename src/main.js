@@ -1,6 +1,7 @@
 import { createVerity } from "./verity.js";
 import { createMultiplayer } from "./multiplayer.js";
 import { importGlbFile } from "./assetLibrary.js";
+import { runMiniScript } from "./miniScript.js";
 
 (() => {
   const canvas = document.getElementById("renderCanvas");
@@ -111,6 +112,7 @@ import { importGlbFile } from "./assetLibrary.js";
   const blockSize = 1;
   let selectedMaterial = "grass";
   let mode = "build";
+  let appMode = "studio";
   let mobileAction = false;
   const keyState = {};
   const mobileMove = { forward: false, back: false, left: false, right: false };
@@ -147,9 +149,13 @@ import { importGlbFile } from "./assetLibrary.js";
   });
 
   function setStatus(message) { status.textContent = message; }
+  function setAppMode(next) { appMode = next === "play" ? "play" : "studio"; document.body.classList.toggle("play-mode", appMode === "play"); document.getElementById("playModeBtn").classList.toggle("active", appMode === "play"); document.getElementById("studioModeBtn").classList.toggle("active", appMode === "studio"); setStatus(appMode === "play" ? "Режим игры — исследуй свой мир!" : "Режим студии — инструменты редактирования доступны."); }
   const verity = createVerity(scene, camera, BABYLON, setStatus);
+  const scriptInput=document.getElementById("miniScriptInput"),scriptOutput=document.getElementById("miniScriptOutput");
+  document.getElementById("runMiniScript").addEventListener("click",()=>{try{const result=runMiniScript(scriptInput.value,{place:(x,y,z,material)=>{if(blocks.some(b=>b.position.x===x&&b.position.y===y&&b.position.z===z))return;makeBlock(x,y,z,material);multiplayer.sendBlockAdd({x,y,z,material})},remove:(x,y,z)=>{const b=blocks.find(v=>v.position.x===x&&v.position.y===y&&v.position.z===z);if(!b)return false;const material=b.metadata.materialName;removeBlockAt(x,y,z);multiplayer.sendBlockRemove({x,y,z,material});return true},say:t=>verity.say(t),setSpeed:v=>{camera.speed=v},teleport:(x,y,z)=>camera.position.set(x,Math.max(1.5,y),z)});scriptOutput.textContent=result.output.join(" | ")||"Код выполнен. Команд: 0";setStatus("MINI Script: выполнено команд — "+result.executed)}catch(e){scriptOutput.textContent=e.message;setStatus("Ошибка MINI Script")}});
   function snap(v) { return Math.round(v / blockSize) * blockSize; }
   function performAction() {
+    if (appMode !== "studio") { setStatus("В режиме игры строительство отключено."); return; }
     const ray = scene.createPickingRay(canvas.width / 2, canvas.height / 2, BABYLON.Matrix.Identity(), camera);
     const hit = scene.pickWithRay(ray, mesh => mesh === ground || (mesh.metadata && mesh.metadata.userBlock));
     if (!hit || !hit.hit || !hit.pickedPoint) { setStatus("Наведи прицел на землю или блок"); return; }
@@ -183,6 +189,8 @@ import { importGlbFile } from "./assetLibrary.js";
   canvas.addEventListener("contextmenu", e => e.preventDefault());
   document.getElementById("buildBtn").addEventListener("click", () => setMode("build"));
   document.getElementById("removeBtn").addEventListener("click", () => setMode("remove"));
+  document.getElementById("playModeBtn").addEventListener("click", () => setAppMode("play"));
+  document.getElementById("studioModeBtn").addEventListener("click", () => setAppMode("studio"));
   function setMode(next) {
     mode = next;
     document.getElementById("buildBtn").classList.toggle("active", mode === "build");
