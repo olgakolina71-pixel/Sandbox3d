@@ -99,3 +99,46 @@ body{background:#091321}
  .room-panel,.verity-panel{top:66px}
  .mobile-controls .move-pad{bottom:75px}.mobile-controls .look-pad{bottom:76px}
 }
+
+
+/* HUB: home, worlds, shop and settings */
+.hub-nav{padding:10px 12px}
+.hub-modal{position:fixed;z-index:20;inset:0;display:none;align-items:center;justify-content:center;padding:18px}
+.hub-modal.open{display:flex}
+.hub-backdrop{position:absolute;inset:0;background:rgba(3,8,16,.74);backdrop-filter:blur(9px)}
+.hub-window{position:relative;width:min(760px,100%);max-height:min(690px,calc(100dvh - 36px));overflow:auto;border:1px solid #a8d6ef38;border-radius:22px;background:linear-gradient(145deg,#142940,#091827 75%);box-shadow:0 35px 110px #000b,inset 0 1px #ffffff13;padding:22px}
+.hub-window-head{display:flex;align-items:center;justify-content:space-between}
+.hub-kicker{font-size:9px;font-weight:900;letter-spacing:2.4px;color:#68e8bd}
+.hub-window-head h2{margin:7px 0 0;font-size:26px;letter-spacing:-.8px;color:#f3f8ff}
+.hub-close{width:38px;height:38px;border:1px solid #ffffff20;border-radius:12px;background:#ffffff0c;color:#fff;font-size:24px;cursor:pointer}
+.hub-tabs{display:flex;gap:7px;margin:20px 0 16px;padding:5px;border:1px solid #ffffff12;border-radius:13px;background:#071421}
+.hub-tabs button{flex:1;border:0;border-radius:9px;background:transparent;color:#9db0c9;padding:10px 8px;font:inherit;font-size:11px;font-weight:800;cursor:pointer}
+.hub-tabs button.active{background:#1c4a43;color:#b5ffe0;box-shadow:inset 0 0 0 1px #6be7bc44}
+.hub-content{min-height:220px}
+.hub-hero{display:grid;grid-template-columns:1.2fr .8fr;gap:15px}
+.hub-hero-main,.hub-side-card,.hub-card{border:1px solid #b5d6ef20;border-radius:16px;background:linear-gradient(145deg,#1b3850,#102338);padding:18px}
+.hub-hero-main{display:flex;flex-direction:column;justify-content:center;min-height:190px;background:radial-gradient(circle at 85% 20%,#286b5d66,transparent 45%),linear-gradient(145deg,#1b4550,#102338)}
+.hub-hero-main h3{margin:0 0 8px;font-size:23px;color:#f5fbff}
+.hub-hero-main p,.hub-side-card p,.hub-card p{margin:0;color:#9db1c9;font-size:11px;line-height:1.65}
+.hub-primary,.hub-secondary{margin-top:16px;border:1px solid #70e8bf66;border-radius:11px;background:linear-gradient(100deg,#246c58,#246a78);color:white;padding:11px 14px;font:inherit;font-size:11px;font-weight:900;cursor:pointer}
+.hub-secondary{margin-top:10px;background:#172e43;border-color:#ffffff20;color:#d9e8f7}
+.hub-side-card{display:flex;flex-direction:column;justify-content:center;gap:10px}
+.hub-stat{display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px solid #ffffff12;color:#9db2cc;font-size:11px}
+.hub-stat b{color:#eff7ff}
+.hub-card-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.hub-card{padding:14px}
+.hub-card-art{height:78px;margin-bottom:12px;border-radius:11px;background:linear-gradient(135deg,#6aa95a,#294c3b);position:relative;overflow:hidden}
+.hub-card-art:before,.hub-card-art:after{content:"";position:absolute;width:64px;height:64px;border:1px solid #ffffff55;transform:rotate(35deg);background:#ffffff12}
+.hub-card-art:before{left:25px;top:22px}.hub-card-art:after{right:20px;top:-22px}
+.hub-card h3{margin:0 0 6px;color:#f2f8ff;font-size:13px}
+.hub-card .hub-secondary{width:100%;padding:9px}
+.hub-setting{display:grid;grid-template-columns:1fr auto;gap:8px;align-items:center;padding:13px 0;border-bottom:1px solid #ffffff12;color:#d9e8f7;font-size:12px}
+.hub-setting small{display:block;margin-top:4px;color:#8da4c1;font-size:10px}
+.hub-setting input[type=range]{grid-column:1/-1;width:100%;accent-color:#68e8bd}
+.hub-empty{padding:22px;border:1px dashed #ffffff2b;border-radius:14px;color:#9fb4ce;text-align:center;font-size:12px}
+@media(max-width:700px){
+ .hub-nav{display:none}.hub-window{padding:15px;border-radius:17px}.hub-window-head h2{font-size:21px}
+ .hub-tabs{gap:3px;margin:14px 0}.hub-tabs button{font-size:9px;padding:9px 4px}
+ .hub-hero{grid-template-columns:1fr}.hub-hero-main{min-height:150px}
+ .hub-card-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
