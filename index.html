@@ -11,7 +11,7 @@
   <div id="game">
     <canvas id="renderCanvas" aria-label="3D game world"></canvas>
     <header class="topbar">
-      <a class="brand" href="./">MINI <span>SANDBOX</span></a>
+      <a class="brand" href="./"><span class="brand-icon">M</span><span class="brand-copy">MINI <b>SANDBOX</b><small>CREATIVE WORLDS</small></span></a>
       <div class="top-actions">
         <button id="roomToggle" class="ui-button room-toggle" type="button">🌐 Мультиплеер</button>
         <button id="verityToggle" class="ui-button verity-toggle" type="button">☺ Верити</button>
@@ -20,7 +20,7 @@
       </div>
     </header>
     <aside class="panel">
-      <div class="panel-title">СТРОИТЕЛЬСТВО</div>
+      <div class="panel-heading"><div><span class="panel-eyebrow">РЕЖИМ ТВОРЦА</span><div class="panel-title">Строительство</div></div><span class="live-dot"></span></div>
       <div class="tool-row">
         <button id="buildBtn" class="tool active" title="Строить">＋ <small>Строить</small></button>
         <button id="removeBtn" class="tool" title="Удалять">－ <small>Удалять</small></button>
@@ -34,7 +34,7 @@
         <button class="material" data-material="brick"><i class="swatch brick"></i>Кирпич</button>
         <button class="material" data-material="neon"><i class="swatch neon"></i>Неон</button>
       </div>
-      <div class="hint">ЛКМ — действие · WASD — движение · Space — прыжок</div>
+      <div class="hint"><span>⌨</span> WASD — движение<br><span>◉</span> ЛКМ / E — действие<br><span>⤒</span> Space — прыжок</div>
     </aside>
     <section id="roomPanel" class="room-panel" aria-label="Мультиплеер">
       <div class="room-header"><strong>Сетевая игра</strong><button id="roomClose" type="button" aria-label="Закрыть">×</button></div>
@@ -61,7 +61,8 @@
     </section>
     <div id="verityBubble" class="verity-bubble"></div>
     <div class="crosshair">＋</div>
-    <div id="status" class="status">Загрузка мира…</div>
+    <div id="status" class="status"><span class="status-dot"></span>Загрузка мира…</div>
+    <nav class="hotbar" aria-label="Быстрый выбор материалов"><div class="hotbar-label">БЫСТРЫЙ ДОСТУП</div><div class="hotbar-slots"><button class="hotbar-slot active" data-hotbar="grass"><i class="swatch grass"></i><small>1</small></button><button class="hotbar-slot" data-hotbar="stone"><i class="swatch stone"></i><small>2</small></button><button class="hotbar-slot" data-hotbar="wood"><i class="swatch wood"></i><small>3</small></button><button class="hotbar-slot" data-hotbar="sand"><i class="swatch sand"></i><small>4</small></button><button class="hotbar-slot" data-hotbar="brick"><i class="swatch brick"></i><small>5</small></button><button class="hotbar-slot" data-hotbar="neon"><i class="swatch neon"></i><small>6</small></button></div></nav>
     <div class="mobile-controls">
       <div class="move-pad">
         <button data-move="forward">▲</button>
