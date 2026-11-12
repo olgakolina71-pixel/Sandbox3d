@@ -11,7 +11,8 @@
   <meta property="og:title" content="MINI SANDBOX 3D — создавай свои миры" />
   <meta property="og:description" content="Строй, исследуй и создавай 3D-миры прямо в браузере." />
   <meta property="og:url" content="https://sandbox-bhu.pages.dev/" />
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"MINI SANDBOX 3D","applicationCategory":"GameApplication","operatingSystem":"Web browser","description":"Браузерная 3D-песочница для строительства и исследования миров.","url":"https://sandbox-bhu.pages.dev/","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}}</script>\n  <title>MINI SANDBOX 3D — браузерная 3D-песочница</title>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"MINI SANDBOX 3D","applicationCategory":"GameApplication","operatingSystem":"Web browser","description":"Браузерная 3D-песочница для строительства и исследования миров.","url":"https://sandbox-bhu.pages.dev/","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}}</script>
+  <title>MINI SANDBOX 3D — браузерная 3D-песочница</title>
   <link rel="stylesheet" href="./style.css" />
 </head>
 <body>
@@ -45,7 +46,11 @@
         <button class="material" data-material="brick"><i class="swatch brick"></i>Кирпич</button>
         <button class="material" data-material="neon"><i class="swatch neon"></i>Неон</button>
       </div>
-      <div class="editor-actions"><button id="undoBtn" type="button" disabled>↶ Отменить</button><button id="redoBtn" type="button" disabled>↷ Повторить</button></div><div class="world-file-actions"><button id="exportWorldBtn" type="button">⇩ Экспорт мира</button><button id="importWorldBtn" type="button">⇧ Импорт мира</button><button id="shareWorldBtn" type="button">↗ Поделиться миром</button><input id="worldFileInput" type="file" accept=".json,application/json" hidden></div><details class="script-workbench studio-only"><summary>⌘ MINI Script — язык мира</summary><p>Команды: place, remove, say, speed, teleport</p><textarea id="miniScriptInput" spellcheck="false"># Первая постройка\nplace -2 0 0 grass\nplace -1 0 0 stone\nplace 0 0 0 wood</textarea><button id="runMiniScript" type="button">▶ Запустить код</button><pre id="miniScriptOutput">Готов к запуску.</pre></details>\n      <div class="model-import-row"><button id="importModelBtn" class="model-import-btn" type="button">⬆ Импортировать 3D-модель</button><input id="modelFileInput" type="file" accept=".glb,.gltf" hidden><small>Поддержка GLB / glTF</small></div>
+      <div class="editor-actions"><button id="undoBtn" type="button" disabled>↶ Отменить</button><button id="redoBtn" type="button" disabled>↷ Повторить</button></div><div class="world-file-actions"><button id="exportWorldBtn" type="button">⇩ Экспорт мира</button><button id="importWorldBtn" type="button">⇧ Импорт мира</button><button id="shareWorldBtn" type="button">↗ Поделиться миром</button><input id="worldFileInput" type="file" accept=".json,application/json" hidden></div><details class="script-workbench studio-only"><summary>⌘ MINI Script — язык мира</summary><p>Команды: place, remove, say, speed, teleport</p><textarea id="miniScriptInput" spellcheck="false"># Первая постройка
+place -2 0 0 grass
+place -1 0 0 stone
+place 0 0 0 wood</textarea><button id="runMiniScript" type="button">▶ Запустить код</button><pre id="miniScriptOutput">Готов к запуску.</pre></details>
+      <div class="model-import-row"><button id="importModelBtn" class="model-import-btn" type="button">⬆ Импортировать 3D-модель</button><input id="modelFileInput" type="file" accept=".glb,.gltf" hidden><small>Поддержка GLB / glTF</small></div>
       <div class="hint"><span>⌨</span> WASD — движение<br><span>◉</span> ЛКМ / E — действие<br><span>⤒</span> Space — прыжок</div>
     </aside>
     <section id="roomPanel" class="room-panel" aria-label="Мультиплеер">
