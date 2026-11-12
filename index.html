@@ -46,7 +46,7 @@
         <button class="material" data-material="brick"><i class="swatch brick"></i>Кирпич</button>
         <button class="material" data-material="neon"><i class="swatch neon"></i>Неон</button>
       </div>
-      <div class="editor-actions"><button id="undoBtn" type="button" disabled>↶ Отменить</button><button id="redoBtn" type="button" disabled>↷ Повторить</button></div><div class="world-file-actions"><button id="exportWorldBtn" type="button">⇩ Экспорт мира</button><button id="importWorldBtn" type="button">⇧ Импорт мира</button><button id="shareWorldBtn" type="button">↗ Поделиться миром</button><input id="worldFileInput" type="file" accept=".json,application/json" hidden></div><details class="script-workbench studio-only"><summary>⌘ MINI Script — язык мира</summary><p>Команды: place, remove, say, speed, teleport</p><textarea id="miniScriptInput" spellcheck="false"># Первая постройка
+      <div class="editor-actions"><button id="undoBtn" type="button" disabled>↶ Отменить</button><button id="redoBtn" type="button" disabled>↷ Повторить</button></div><div class="world-file-actions"><button id="exportWorldBtn" type="button">⇩ Экспорт мира</button><button id="importWorldBtn" type="button">⇧ Импорт мира</button><button id="shareWorldBtn" type="button">↗ Поделиться миром</button><input id="worldFileInput" type="file" accept=".json,application/json" hidden></div><details class="script-workbench studio-only"><summary>⌘ SandScript — язык мира</summary><p>Команды: place, remove, say, speed, teleport</p><textarea id="miniScriptInput" spellcheck="false"># Первая постройка
 place -2 0 0 grass
 place -1 0 0 stone
 place 0 0 0 wood</textarea><button id="runMiniScript" type="button">▶ Запустить код</button><pre id="miniScriptOutput">Готов к запуску.</pre></details>
@@ -92,6 +92,7 @@ place 0 0 0 wood</textarea><button id="runMiniScript" type="button">▶ Запу
           <button type="button" data-hub-tab="home" class="active">Обзор</button>
           <button type="button" data-hub-tab="worlds">Мои миры</button>
           <button type="button" data-hub-tab="shop">Магазин</button>
+          <button type="button" data-hub-tab="skins">Скины</button>
           <button type="button" data-hub-tab="settings">Настройки</button>
         </nav>
         <div id="hubContent" class="hub-content"></div>
