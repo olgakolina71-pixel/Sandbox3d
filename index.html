@@ -13,6 +13,7 @@
     <header class="topbar">
       <a class="brand" href="./">MINI <span>SANDBOX</span></a>
       <div class="top-actions">
+        <button id="verityToggle" class="ui-button verity-toggle" type="button">☺ Верити</button>
         <button id="saveBtn" class="ui-button">Сохранить</button>
         <button id="resetBtn" class="ui-button danger">Сбросить</button>
       </div>
@@ -34,6 +35,20 @@
       </div>
       <div class="hint">ЛКМ — действие · WASD — движение · Space — прыжок</div>
     </aside>
+    <section id="verityPanel" class="verity-panel" aria-label="Чат с Верити">
+      <div class="verity-header">
+        <div class="verity-avatar">☺</div>
+        <div><strong>Верити</strong><small>3D-компаньон</small></div>
+        <button id="verityClose" type="button" aria-label="Закрыть чат">×</button>
+      </div>
+      <div id="verityMessages" class="verity-messages" aria-live="polite"></div>
+      <form id="verityForm" class="verity-form">
+        <input id="verityInput" type="text" maxlength="180" autocomplete="off" placeholder="Напиши Верити..." aria-label="Сообщение Верити" />
+        <button type="submit" aria-label="Отправить">➤</button>
+      </form>
+      <div class="verity-note">Локальный игровой помощник</div>
+    </section>
+    <div id="verityBubble" class="verity-bubble"></div>
     <div class="crosshair">＋</div>
     <div id="status" class="status">Загрузка мира…</div>
     <div class="mobile-controls">
