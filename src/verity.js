@@ -73,7 +73,7 @@ export function createVerity(scene, camera, BABYLON, setStatus) {
     messageTimer = 5;
     addMessage(text, "verity");
   }
-  function answer(raw) {
+  async function answer(raw) {
     const text = raw.trim().toLowerCase();
     if (!text) return;
     addMessage(raw.trim(), "user");
@@ -95,7 +95,19 @@ export function createVerity(scene, camera, BABYLON, setStatus) {
     } else if (text.includes("построй") || text.includes("строить")) {
       say("Выбери материал слева, наведи прицел на место и нажми ЛКМ. Я могу помочь советом!");
     } else {
-      say("Я пока учусь понимать сообщения. Попробуй спросить про строительство или напиши «помощь».");
+      setStatus("Верити думает…");
+      try {
+        const response = await fetch("/api/verity", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ messages: [{ role: "user", content: raw.trim() }] }) });
+        const data = await response.json().catch(() => ({}));
+        if (!response.ok) throw new Error(data.error || "AI service unavailable");
+        if (typeof data.reply !== "string" || !data.reply.trim()) throw new Error("Empty model response");
+        say(data.reply.trim().slice(0, 1800));
+      } catch (error) {
+        say(error.message.includes("AI binding") || error.message.includes("not configured")
+          ? "Мой ИИ-модуль ещё не подключён к Cloudflare. Чат готов, но для настоящих ответов нужно включить Workers AI."
+          : "Не удалось связаться с ИИ-сервисом. Проверь подключение и попробуй ещё раз.");
+        setStatus("Верити AI недоступен");
+      }
     }
   }
 
