@@ -375,7 +375,7 @@ import { importGlbFile } from "./assetLibrary.js";
   }
   gameModeBtn.addEventListener("click", () => setWorkspaceMode("game"));
   studioModeBtn.addEventListener("click", () => setWorkspaceMode("studio"));
-  setWorkspaceMode("studio");
+  setWorkspaceMode("game");
 
   const miniScriptEditor = document.getElementById("miniScriptEditor");
   const miniScriptOutput = document.getElementById("miniScriptOutput");
