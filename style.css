@@ -314,3 +314,11 @@ body{background:var(--ss-bg);color:var(--ss-text)}
 @media(min-width:901px){
  .mobile-editor-nav{display:none!important}
 }
+
+
+/* SVG icon system */
+.hub-tabs button{display:inline-flex;align-items:center;justify-content:center;gap:8px}
+.hub-tabs button svg{width:17px;height:17px;flex:none}
+.mobile-editor-nav button{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px}
+.mobile-editor-nav button svg{width:18px;height:18px;flex:none}
+.hub-theme-toggle{display:grid;place-items:center}
