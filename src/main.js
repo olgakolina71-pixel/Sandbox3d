@@ -1,6 +1,7 @@
 import { createVerity } from "./verity.js";
 import { createMultiplayer } from "./multiplayer.js";
 import { importGlbFile } from "./assetLibrary.js";
+import { initNextGen } from "./nextgen.js";
 
 (() => {
   const canvas = document.getElementById("renderCanvas");
@@ -128,6 +129,12 @@ import { importGlbFile } from "./assetLibrary.js";
     blocks.push(block);
     return block;
   }
+  window.__miniSandboxAddBlock = (x,y,z,material) => {
+    if (![x,y,z].every(Number.isFinite) || Math.abs(x)>80 || Math.abs(y)>40 || Math.abs(z)>80 || !mats[material]) return false;
+    if (blocks.some(b=>Math.abs(b.position.x-x)<0.01&&Math.abs(b.position.y-y)<0.01&&Math.abs(b.position.z-z)<0.01)) return false;
+    makeBlock(x,y,z,material); multiplayer?.sendBlockAdd({x,y,z,material}); return true;
+  };
+  window.__miniSandboxClearBlocks = () => { blocks.splice(0).forEach(b=>b.dispose()); };
 
   function addStarterBuild() {
     for (let x = -2; x <= 2; x++) {
@@ -410,6 +417,7 @@ import { importGlbFile } from "./assetLibrary.js";
     addStarterBuild(); setStatus("Мир сброшен");
   });
   if (!loadSharedWorldFromUrl() && loadWorld()) setStatus("Сохранённый мир загружен");
+  initNextGen({ setStatus, camera, engine });
 
   let previousFrame = performance.now();
   engine.runRenderLoop(() => {
