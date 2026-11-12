@@ -404,10 +404,13 @@ import { runSandScript } from "./sandScript.js";
   document.getElementById("menuBtn").addEventListener("click",()=>openHub("home"));
   document.getElementById("worldsBtn").addEventListener("click",()=>openHub("worlds"));
   document.getElementById("shopBtn").addEventListener("click",()=>openHub("shop"));
-  document.getElementById("settingsBtn").addEventListener("click",()=>openHub("settings"));\n  openHub("home");
+  document.getElementById("settingsBtn").addEventListener("click",()=>openHub("settings"));
+  openHub("home");
   hubContent.addEventListener("click",e=>{
     const action=e.target.closest("[data-hub-action]")?.dataset.hubAction;
-    const material=e.target.closest("[data-store-material]")?.dataset.storeMaterial;\n    const skin=e.target.closest("[data-skin-choice]")?.dataset.skinChoice;\n    if(skin){localStorage.setItem("sandboxSkin",skin);document.documentElement.dataset.skin=skin;showHubTab("skins");setStatus("Скин выбран: "+skin);}
+    const material=e.target.closest("[data-store-material]")?.dataset.storeMaterial;
+    const skin=e.target.closest("[data-skin-choice]")?.dataset.skinChoice;
+    if(skin){localStorage.setItem("sandboxSkin",skin);document.documentElement.dataset.skin=skin;showHubTab("skins");setStatus("Скин выбран: "+skin);}
     if(action==="resume") closeHub();
     if(action==="worlds") showHubTab("worlds");
     if(action==="load"){if(loadWorld())setStatus("Мир загружен");else setStatus("Сохранённого мира пока нет");closeHub();}
