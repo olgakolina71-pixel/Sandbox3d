@@ -19,26 +19,27 @@
   <div id="game">
     <canvas id="renderCanvas" aria-label="3D game world"></canvas>
     <header class="topbar">
-      <a class="brand" href="./"><span class="brand-icon">M</span><span class="brand-copy"><h1>MINI SANDBOX 3D</h1><small>CREATIVE WORLDS</small></span></a>
+      <a class="brand" href="./"><img class="brand-mark" src="https://i.allsvgicons.com/mdi/cube-outline.svg" alt=""><span class="brand-copy"><h1>MINI SANDBOX 3D</h1><small>CREATE WITHOUT LIMITS</small></span></a>
       <div class="top-actions">
-        <button id="menuBtn" class="ui-button hub-nav" type="button">⌂ Меню</button>
-        <button id="worldsBtn" class="ui-button hub-nav" type="button">▦ Миры</button><button id="playModeBtn" class="ui-button mode-button" type="button">▶ Играть</button><button id="studioModeBtn" class="ui-button mode-button active" type="button">✦ Студия</button>
-        <button id="shopBtn" class="ui-button hub-nav" type="button">✦ Магазин</button>
-        <button id="settingsBtn" class="ui-button hub-nav" type="button">⚙</button><a class="ui-button hub-nav" href="./about/">О проекте</a>
-        <button id="roomToggle" class="ui-button room-toggle" type="button">🌐 Мультиплеер</button>
-        <button id="verityToggle" class="ui-button verity-toggle" type="button">☺ Верити</button>
-        <button id="saveBtn" class="ui-button">Сохранить</button>
+        <button id="menuBtn" class="ui-button hub-nav" type="button"><img src="https://i.allsvgicons.com/material-symbols/home-outline-rounded.svg" alt="">Меню</button>
+        <button id="worldsBtn" class="ui-button hub-nav" type="button"><img src="https://i.allsvgicons.com/mdi/world.svg" alt="">Миры</button><button id="playModeBtn" class="ui-button mode-button" type="button"><img src="https://i.allsvgicons.com/mdi/play-outline.svg" alt="">Играть</button><button id="studioModeBtn" class="ui-button mode-button active" type="button"><img src="https://i.allsvgicons.com/material-symbols/code-rounded.svg" alt="">Студия</button>
+        <button id="shopBtn" class="ui-button hub-nav" type="button"><img src="https://i.allsvgicons.com/solar/bag-outline.svg" alt="">Магазин</button>
+        <button id="settingsBtn" class="ui-button hub-nav" type="button" aria-label="Настройки"><img src="https://i.allsvgicons.com/material-symbols/settings-outline.svg" alt=""></button><button id="themeToggle" class="ui-button theme-toggle" type="button" aria-label="Переключить тему">☼</button><a class="ui-button hub-nav" href="./about/">О проекте</a>
+        <button id="roomToggle" class="ui-button room-toggle" type="button"><img src="https://i.allsvgicons.com/material-symbols/groups-outline.svg" alt="">Мультиплеер</button>
+        <button id="verityToggle" class="ui-button verity-toggle" type="button">Верити</button>
+        <button id="saveBtn" class="ui-button save-button">Сохранить</button>
         <button id="resetBtn" class="ui-button danger">Сбросить</button>
       </div>
     </header>
-    <aside class="panel">
-      <div class="panel-heading"><div><span class="panel-eyebrow">РЕЖИМ ТВОРЦА</span><div class="panel-title">Строительство</div></div><span class="live-dot"></span></div>
-      <div class="tool-row">
+    <nav class="mobile-editor-tabs" aria-label="Инструменты редактора"><button type="button" data-mobile-editor-tab="tools" class="active">Инструменты</button><button type="button" data-mobile-editor-tab="materials">Блоки</button><button type="button" data-mobile-editor-tab="code">Код</button><button type="button" data-mobile-editor-tab="files">Файлы</button></nav>
+    <aside class="panel" data-mobile-tab="tools">
+      <div class="panel-heading" data-editor-group="tools"><div><span class="panel-eyebrow">РЕЖИМ ТВОРЦА</span><div class="panel-title">Строительство</div></div><span class="live-dot"></span></div>
+      <div class="tool-row" data-editor-group="tools">
         <button id="buildBtn" class="tool active" title="Строить">＋ <small>Строить</small></button>
         <button id="removeBtn" class="tool" title="Удалять">－ <small>Удалять</small></button>
       </div>
-      <div class="panel-title materials-title">МАТЕРИАЛЫ</div>
-      <div id="materials" class="materials">
+      <div class="panel-title materials-title" data-editor-group="materials">МАТЕРИАЛЫ</div>
+      <div id="materials" class="materials" data-editor-group="materials">
         <button class="material selected" data-material="grass"><i class="swatch grass"></i>Трава</button>
         <button class="material" data-material="stone"><i class="swatch stone"></i>Камень</button>
         <button class="material" data-material="wood"><i class="swatch wood"></i>Дерево</button>
@@ -46,15 +47,15 @@
         <button class="material" data-material="brick"><i class="swatch brick"></i>Кирпич</button>
         <button class="material" data-material="neon"><i class="swatch neon"></i>Неон</button>
       </div>
-      <div class="editor-actions"><button id="undoBtn" type="button" disabled>↶ Отменить</button><button id="redoBtn" type="button" disabled>↷ Повторить</button></div><div class="world-file-actions"><button id="exportWorldBtn" type="button">⇩ Экспорт мира</button><button id="importWorldBtn" type="button">⇧ Импорт мира</button><button id="shareWorldBtn" type="button">↗ Поделиться миром</button><input id="worldFileInput" type="file" accept=".json,application/json" hidden></div><details class="script-workbench studio-only"><summary>⌘ SandScript — язык мира</summary><p>Команды: place, remove, say, speed, teleport</p><textarea id="sandScriptInput" spellcheck="false"># Первая постройка
+      <div class="editor-actions" data-editor-group="files"><button id="undoBtn" type="button" disabled>↶ Отменить</button><button id="redoBtn" type="button" disabled>↷ Повторить</button></div><div class="world-file-actions" data-editor-group="files"><button id="exportWorldBtn" type="button">⇩ Экспорт мира</button><button id="importWorldBtn" type="button">⇧ Импорт мира</button><button id="shareWorldBtn" type="button">↗ Поделиться миром</button><input id="worldFileInput" type="file" accept=".json,application/json" hidden></div><details class="script-workbench studio-only" data-editor-group="code"><summary>⌘ SandScript — язык мира</summary><p>Команды: place, remove, say, speed, teleport</p><textarea id="sandScriptInput" spellcheck="false"># Первая постройка
 let x = -2
 repeat 5 {
   place x 0 0 grass
   let x = x + 1
 }
 say "Постройка готова!"</textarea><button id="runSandScript" type="button">▶ Запустить код</button><pre id="sandScriptOutput">Готов к запуску.</pre></details>
-      <div class="model-import-row"><button id="importModelBtn" class="model-import-btn" type="button">⬆ Импортировать 3D-модель</button><input id="modelFileInput" type="file" accept=".glb,.gltf" hidden><small>Поддержка GLB / glTF</small></div>
-      <div class="hint"><span>⌨</span> WASD — движение<br><span>◉</span> ЛКМ / E — действие<br><span>⤒</span> Space — прыжок</div>
+      <div class="model-import-row" data-editor-group="tools"><button id="importModelBtn" class="model-import-btn" type="button">⬆ Импортировать 3D-модель</button><input id="modelFileInput" type="file" accept=".glb,.gltf" hidden><small>Поддержка GLB / glTF</small></div>
+      <div class="hint" data-editor-group="tools"><span>⌨</span> WASD — движение<br><span>◉</span> ЛКМ / E — действие<br><span>⤒</span> Space — прыжок</div>
     </aside>
     <section id="roomPanel" class="room-panel" aria-label="Мультиплеер">
       <div class="room-header"><strong>Сетевая игра</strong><button id="roomClose" type="button" aria-label="Закрыть">×</button></div>
@@ -99,7 +100,7 @@ say "Постройка готова!"</textarea><button id="runSandScript" type
           <button type="button" data-hub-tab="skins"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M20 21a8 8 0 0 0-16 0" fill="none" stroke="currentColor" stroke-width="2"/></svg>Скины</button>
           <button type="button" data-hub-tab="settings"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 17H5M19 7h-9" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="17" cy="17" r="3" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="7" cy="7" r="3" fill="none" stroke="currentColor" stroke-width="2"/></svg>Настройки</button>
         </nav>
-        <div id="hubContent" class="hub-content"></div>
+        <div id="hubSearchResults" class="hub-search-results" hidden></div><div id="hubContent" class="hub-content"></div>
       </div>
     </section>
     <nav class="mobile-editor-nav" aria-label="Инструменты редактора">
@@ -115,6 +116,7 @@ say "Постройка готова!"</textarea><button id="runSandScript" type
       </div>
       <div class="look-pad"><button id="jumpBtn">ПРЫЖОК</button><button id="mobileAction">СТРОИТЬ</button></div>
     </div>
+    <nav class="mobile-app-nav" aria-label="Основная навигация"><button type="button" data-app-nav="home" class="active"><img src="https://i.allsvgicons.com/material-symbols/home-outline-rounded.svg" alt="">Главная</button><button type="button" data-app-nav="play"><img src="https://i.allsvgicons.com/mdi/play-outline.svg" alt="">Играть</button><button type="button" data-app-nav="studio"><img src="https://i.allsvgicons.com/material-symbols/code-rounded.svg" alt="">Студия</button><button type="button" data-app-nav="profile"><img src="https://i.allsvgicons.com/mdi/user-outline.svg" alt="">Профиль</button></nav>
     <div class="footer-note">MINI SANDBOX 3D <span>•</span> Creative mode</div>
   </div>
   <script src="https://cdn.babylonjs.com/babylon.js"></script>
