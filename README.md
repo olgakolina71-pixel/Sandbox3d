@@ -6,9 +6,12 @@ Browser-based 3D creative sandbox built with Babylon.js and Vite.
 - First-person building and block removal
 - Six procedural block materials
 - Local world save in browser storage
-- Floating Verity companion with a local scripted helper chat
+- Floating Verity companion with a Workers AI chat endpoint (requires Pages AI binding named AI)
 - Multiplayer rooms with live player positions, shared block edits and room chat
 - Mobile movement controls
+- Separate play and studio modes
+- MINI Script safe command interpreter (no eval)
+- SEO metadata, SoftwareApplication structured data, robots.txt, sitemap.xml and About page
 
 ## Multiplayer architecture
 - Frontend: `src/multiplayer.js` connects to `/api/room/:room` over WebSocket.
@@ -51,3 +54,10 @@ npm run preview
 - Mobile controls use touch-safe pointer handling and safe-area spacing.
 - Bug reports and feature requests go to the public [GitHub Issues](https://github.com/olgakolina71-pixel/Sandbox3d/issues) page.
 - The update feed is a static release note file; automatic in-game updates are not installed.
+
+
+## MINI Script
+Commands: `place x y z material`, `remove x y z`, `say "text"`, `speed 0.1..1`, `teleport x y z`. Scripts use an allow-listed interpreter; arbitrary JavaScript is never evaluated.
+
+## Verity AI
+The Pages Function at `/api/verity` calls Cloudflare Workers AI model `@cf/meta/llama-3.1-8b-instruct`. Configure a Workers AI binding named `AI` in Cloudflare Pages Settings → Functions → Bindings for production and preview, then redeploy. Inference is usage-billed by Cloudflare.
