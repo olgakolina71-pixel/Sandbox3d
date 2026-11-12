@@ -175,3 +175,10 @@ body{background:#091321}
   .mobile-controls{padding-bottom:env(safe-area-inset-bottom)}
   .hotbar{bottom:calc(12px + env(safe-area-inset-bottom))}
 }
+
+.mode-button{border-color:#6ce8c15c;color:#c5f8e5;background:#153d39}.mode-button.active{border-color:#7bf0c5;background:#1e5b4c;color:#e0fff2}
+body.play-mode .panel,body.play-mode .hotbar,body.play-mode .mobile-controls .look-pad #mobileAction{display:none!important}
+.script-workbench{margin-top:16px;border-top:1px solid #ffffff1a;padding-top:12px}.script-workbench summary{cursor:pointer;color:#a9f4d5;font-size:11px;font-weight:850;list-style-position:inside}.script-workbench p{margin:8px 0;color:#91a6c4;font-size:9px}
+.script-workbench textarea{display:block;width:100%;min-height:120px;resize:vertical;border:1px solid #ffffff22;border-radius:9px;background:#071321;color:#d5f7e8;padding:9px;font:10px/1.5 ui-monospace,monospace}
+.script-workbench button{width:100%;margin-top:8px;border:1px solid #72eac066;border-radius:9px;background:#1d5949;color:#e1fff3;padding:9px;font-size:10px;font-weight:800}.script-workbench pre{max-height:80px;overflow:auto;white-space:pre-wrap;color:#9eb6ca;font:9px/1.5 ui-monospace,monospace}
+@media(max-width:700px){.top-actions .mode-button{padding:7px 7px;font-size:9px}.top-actions .hub-nav{display:none}.script-workbench textarea{min-height:100px}}
