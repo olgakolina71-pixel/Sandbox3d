@@ -414,7 +414,8 @@ import { runSandScript } from "./sandScript.js";
     if(skin){localStorage.setItem("sandboxSkin",skin);document.documentElement.dataset.skin=skin;showHubTab("skins");setStatus("Скин выбран: "+skin);}
     if(action==="resume") closeHub();
     if(action==="skins") showHubTab("skins");
-    if(action==="play"){setAppMode("play");closeHub()}\n    if(action==="studio"){setAppMode("studio");closeHub()}
+    if(action==="play"){setAppMode("play");closeHub()}
+    if(action==="studio"){setAppMode("studio");closeHub()}
     if(action==="worlds") showHubTab("worlds");
     if(action==="load"){if(loadWorld())setStatus("Мир загружен");else setStatus("Сохранённого мира пока нет");closeHub();}
     if(action==="new"){if(confirm("Создать новый мир? Текущая постройка будет сброшена.")){blocks.splice(0).forEach(b=>b.dispose());addStarterBuild();localStorage.removeItem("miniSandboxWorld");setStatus("Новый мир создан");closeHub();}}
