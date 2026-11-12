@@ -42,3 +42,12 @@ npm run preview
 - [Poly Haven](https://polyhaven.com/) — CC0 models, PBR textures and HDRIs. See its [license](https://polyhaven.com/license).
 - [Kenney](https://kenney.nl/assets) — CC0 game asset packs. See [Kenney support/licensing](https://kenney.nl/support).
 - [Babylon.js official Asset Librarian](https://doc.babylonjs.com/toolsAndResources/assetLibrarian) — free assets; check each source asset's license and attribution before copying files into this repository.
+
+
+## Sharing, updates and feedback
+- The main menu reads the current release notes from `version.json`.
+- **Поделиться миром** creates a self-contained URL containing the block layout. Keep shared worlds below 1,800 blocks for a manageable link; use JSON export for larger builds.
+- Opening a shared URL imports the included block layout locally. It does not publish the world to a public gallery or sync it to a multiplayer room.
+- Mobile controls use touch-safe pointer handling and safe-area spacing.
+- Bug reports and feature requests go to the public [GitHub Issues](https://github.com/olgakolina71-pixel/Sandbox3d/issues) page.
+- The update feed is a static release note file; automatic in-game updates are not installed.
