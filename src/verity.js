@@ -128,7 +128,7 @@ export function createVerity(scene, camera, BABYLON, setStatus) {
     const toCamera = camera.position.subtract(root.position);
     root.rotation.y = Math.atan2(-toCamera.x, -toCamera.z);
     const t = performance.now() * 0.001;
-    root.position.y = BABYLON.Scalar.Lerp(root.position.y, hoverBaseY, Math.min(1, deltaSeconds * 3)) + Math.sin(t * (mood === "dance" ? 9 : 2.6)) * (mood === "dance" ? 0.12 : 0.055);
+    root.position.y = hoverBaseY + Math.sin(t * (mood === "dance" ? 9 : 2.6)) * (mood === "dance" ? 0.12 : 0.055);
     root.rotation.z = mood === "dance" ? Math.sin(t * 9) * 0.22 : Math.sin(t * 2) * 0.035;
     if (mood === "dance" && Math.floor(t) % 4 === 0) mood = "happy";
     if (messageTimer > 0) {
