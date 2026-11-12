@@ -1,4 +1,5 @@
 import { createVerity } from "./verity.js";
+import { createMultiplayer } from "./multiplayer.js";
 
 (() => {
   const canvas = document.getElementById("renderCanvas");
@@ -37,6 +38,16 @@ import { createVerity } from "./verity.js";
     mat.diffuseColor = BABYLON.Color3.FromHexString(hex);
     mat.specularColor = key === "neon" ? new BABYLON.Color3(0.8, 1, 1) : new BABYLON.Color3(0.12, 0.12, 0.12);
     if (key === "neon") { mat.emissiveColor = BABYLON.Color3.FromHexString("#1a8f7a"); }
+    const texture = new BABYLON.DynamicTexture(key + "Texture", { width: 128, height: 128 }, scene, false);
+    const ctx = texture.getContext();
+    ctx.fillStyle = hex; ctx.fillRect(0, 0, 128, 128);
+    let seed = key.split("").reduce((n, c) => n + c.charCodeAt(0), 17);
+    const rand = () => { seed = (seed * 9301 + 49297) % 233280; return seed / 233280; };
+    if (key === "wood") { for (let y=8;y<128;y+=18) { ctx.strokeStyle="rgba(45,25,10,.28)";ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(0,y);ctx.bezierCurveTo(40,y-5,85,y+5,128,y);ctx.stroke(); } }
+    else if (key === "brick") { for(let y=0;y<128;y+=32){for(let x=(y/32%2)*32;x<128;x+=64){ctx.strokeStyle="rgba(50,20,15,.35)";ctx.lineWidth=3;ctx.strokeRect(x,y,64,32)}} }
+    else { for(let i=0;i<230;i++){const s=2+rand()*8;ctx.fillStyle=rand()>.5?"rgba(255,255,255,.10)":"rgba(0,0,0,.12)";ctx.fillRect(rand()*128,rand()*128,s,s)} }
+    texture.update(); texture.wrapU = BABYLON.Texture.WRAP_ADDRESSMODE; texture.wrapV = BABYLON.Texture.WRAP_ADDRESSMODE;
+    mat.diffuseTexture = texture;
     mats[key] = mat;
   });
 
@@ -58,6 +69,7 @@ import { createVerity } from "./verity.js";
   grid.isPickable = false;
 
   const blocks = [];
+  let multiplayer = null;
   const blockSize = 1;
   let selectedMaterial = "grass";
   let mode = "build";
@@ -86,6 +98,12 @@ import { createVerity } from "./verity.js";
     makeBlock(1, 1, 2, "wood", true);
   }
   addStarterBuild();
+  window.__miniSandboxGetBlocks = () => blocks.map(b => ({x:b.position.x,y:b.position.y,z:b.position.z,material:b.metadata.materialName}));
+  multiplayer = createMultiplayer({ scene, camera, BABYLON, onStatus: setStatus,
+    onBlockAdd: b => { const exists=blocks.some(v=>v.position.x===b.x&&v.position.y===b.y&&v.position.z===b.z); if(!exists)makeBlock(b.x,b.y,b.z,b.material); },
+    onBlockRemove: b => { const target=blocks.find(v=>v.position.x===b.x&&v.position.y===b.y&&v.position.z===b.z); if(target){blocks.splice(blocks.indexOf(target),1);target.dispose()} },
+    onWorldSync: data => { blocks.splice(0).forEach(b=>b.dispose()); data.forEach(b=>makeBlock(b.x,b.y,b.z,b.material)); }
+  });
 
   function setStatus(message) { status.textContent = message; }
   const verity = createVerity(scene, camera, BABYLON, setStatus);
@@ -98,6 +116,7 @@ import { createVerity } from "./verity.js";
       const target = hit.pickedMesh;
       if (target && target.metadata && target.metadata.userBlock) {
         const i = blocks.indexOf(target); if (i >= 0) blocks.splice(i, 1);
+        multiplayer.sendBlockRemove({x:target.position.x,y:target.position.y,z:target.position.z,material:target.metadata.materialName});
         target.dispose(); setStatus("Блок удалён");
       } else setStatus("Здесь нет блока");
       return;
@@ -112,7 +131,7 @@ import { createVerity } from "./verity.js";
       setStatus("Слишком близко к игроку"); return;
     }
     const occupied = blocks.some(b => Math.abs(b.position.x-x)<0.1 && Math.abs(b.position.y-y)<0.1 && Math.abs(b.position.z-z)<0.1);
-    if (!occupied) { makeBlock(x, y, z, selectedMaterial); setStatus("Блок установлен: " + selectedMaterial); }
+    if (!occupied) { makeBlock(x, y, z, selectedMaterial); multiplayer.sendBlockAdd({x,y,z,material:selectedMaterial}); setStatus("Блок установлен: " + selectedMaterial); }
   }
 
   canvas.addEventListener("pointerdown", event => {
@@ -185,6 +204,7 @@ import { createVerity } from "./verity.js";
     const deltaSeconds = Math.min((now - previousFrame) / 1000, 0.05);
     previousFrame = now;
     verity.update(deltaSeconds);
+    multiplayer.update(deltaSeconds);
     const forward = (mobileMove.forward ? 1 : 0) - (mobileMove.back ? 1 : 0);
     const side = (mobileMove.right ? 1 : 0) - (mobileMove.left ? 1 : 0);
     if (forward || side) {
