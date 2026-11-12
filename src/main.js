@@ -227,6 +227,49 @@ import { createMultiplayer } from "./multiplayer.js";
       return true;
     } catch { return false; }
   }
+
+  const hub = document.getElementById("hubModal");
+  const hubContent = document.getElementById("hubContent");
+  const hubTitle = document.getElementById("hubTitle");
+  const hubTabs = [...document.querySelectorAll("[data-hub-tab]")];
+  function openHub(tab = "home") {
+    hub.classList.add("open"); hub.setAttribute("aria-hidden","false"); showHubTab(tab);
+    document.exitPointerLock?.();
+  }
+  function closeHub() { hub.classList.remove("open"); hub.setAttribute("aria-hidden","true"); }
+  function showHubTab(tab) {
+    hubTabs.forEach(b=>b.classList.toggle("active",b.dataset.hubTab===tab));
+    const titles={home:"Главное меню",worlds:"Мои миры",shop:"Магазин",settings:"Настройки"};
+    hubTitle.textContent=titles[tab]||titles.home;
+    if(tab==="home") hubContent.innerHTML=\`<div class="hub-hero"><div class="hub-hero-main"><h3>Твой мир. Твои правила.</h3><p>Строй, исследуй и создавай собственные пространства вместе с друзьями.</p><button class="hub-primary" data-hub-action="resume">▶ Продолжить игру</button></div><div class="hub-side-card"><div class="hub-stat"><span>Режим</span><b>Creative</b></div><div class="hub-stat"><span>Материалы</span><b>6 видов</b></div><div class="hub-stat"><span>Сохранение</span><b>На устройстве</b></div><button class="hub-secondary" data-hub-action="worlds">Открыть мои миры</button></div></div>\`;
+    if(tab==="worlds") hubContent.innerHTML=\`<div class="hub-card-grid"><article class="hub-card"><div class="hub-card-art"></div><h3>Мой мир</h3><p>Локальное сохранение на этом устройстве</p><button class="hub-secondary" data-hub-action="load">Загрузить мир</button></article><article class="hub-card"><div class="hub-card-art" style="background:linear-gradient(135deg,#6c8ea8,#263f62)"></div><h3>Новый мир</h3><p>Начать чистую творческую площадку</p><button class="hub-secondary" data-hub-action="new">Создать мир</button></article></div>\`;
+    if(tab==="shop") hubContent.innerHTML=\`<div class="hub-card-grid"><article class="hub-card"><div class="hub-card-art" style="background:linear-gradient(135deg,#6eaa5a,#315b3b)"></div><h3>Nature Pack</h3><p>Трава и природные оттенки</p><button class="hub-secondary" data-store-material="grass">Выбрать</button></article><article class="hub-card"><div class="hub-card-art" style="background:linear-gradient(135deg,#aab8c7,#566577)"></div><h3>Stoneworks</h3><p>Камень для крепостей и дорог</p><button class="hub-secondary" data-store-material="stone">Выбрать</button></article><article class="hub-card"><div class="hub-card-art" style="background:linear-gradient(135deg,#f4d078,#8f5b35)"></div><h3>Woodland</h3><p>Тёплые деревянные блоки</p><button class="hub-secondary" data-store-material="wood">Выбрать</button></article><article class="hub-card"><div class="hub-card-art" style="background:linear-gradient(135deg,#e5c98c,#a47d4e)"></div><h3>Desert</h3><p>Песочные материалы</p><button class="hub-secondary" data-store-material="sand">Выбрать</button></article><article class="hub-card"><div class="hub-card-art" style="background:linear-gradient(135deg,#dc8d75,#783e39)"></div><h3>Brick Set</h3><p>Кирпич для построек</p><button class="hub-secondary" data-store-material="brick">Выбрать</button></article><article class="hub-card"><div class="hub-card-art" style="background:linear-gradient(135deg,#adfff0,#0b9e86)"></div><h3>Neon Lab</h3><p>Светящиеся акценты</p><button class="hub-secondary" data-store-material="neon">Выбрать</button></article></div><p style="margin:12px 2px 0;color:#829ab6;font-size:10px">Это бесплатная витрина материалов — покупки и платежи не подключены.</p>\`;
+    if(tab==="settings") hubContent.innerHTML=\`<div class="hub-setting"><div>Скорость движения<small>Регулирует скорость игрока</small></div><b id="speedValue">0.28</b><input id="speedRange" type="range" min="0.12" max="0.65" step="0.01" value="0.28"></div><div class="hub-setting"><div>Угол обзора<small>Ширина обзора камеры</small></div><b id="fovValue">0.80</b><input id="fovRange" type="range" min="0.55" max="1.25" step="0.01" value="0.80"></div><div class="hub-setting"><div>Качество рендера<small>Баланс качества и производительности</small></div><select id="qualitySelect" style="background:#102338;color:#eaf5ff;border:1px solid #ffffff22;border-radius:8px;padding:8px"><option value="1">Высокое</option><option value="1.5">Сбалансированное</option><option value="2">Производительность</option></select></div>\`;
+    if(tab==="settings") {
+      const speed=document.getElementById("speedRange"), fov=document.getElementById("fovRange"), quality=document.getElementById("qualitySelect");
+      speed.value=camera.speed;document.getElementById("speedValue").textContent=Number(camera.speed).toFixed(2);
+      fov.value=camera.fov;document.getElementById("fovValue").textContent=Number(camera.fov).toFixed(2);
+      speed.addEventListener("input",()=>{camera.speed=Number(speed.value);document.getElementById("speedValue").textContent=Number(speed.value).toFixed(2)});
+      fov.addEventListener("input",()=>{camera.fov=Number(fov.value);document.getElementById("fovValue").textContent=Number(fov.value).toFixed(2)});
+      quality.addEventListener("change",()=>engine.setHardwareScalingLevel(Number(quality.value)));
+    }
+  }
+  hubTabs.forEach(b=>b.addEventListener("click",()=>showHubTab(b.dataset.hubTab)));
+  document.querySelectorAll("[data-hub-close]").forEach(b=>b.addEventListener("click",closeHub));
+  document.getElementById("menuBtn").addEventListener("click",()=>openHub("home"));
+  document.getElementById("worldsBtn").addEventListener("click",()=>openHub("worlds"));
+  document.getElementById("shopBtn").addEventListener("click",()=>openHub("shop"));
+  document.getElementById("settingsBtn").addEventListener("click",()=>openHub("settings"));
+  hubContent.addEventListener("click",e=>{
+    const action=e.target.closest("[data-hub-action]")?.dataset.hubAction;
+    const material=e.target.closest("[data-store-material]")?.dataset.storeMaterial;
+    if(action==="resume") closeHub();
+    if(action==="worlds") showHubTab("worlds");
+    if(action==="load"){if(loadWorld())setStatus("Мир загружен");else setStatus("Сохранённого мира пока нет");closeHub();}
+    if(action==="new"){if(confirm("Создать новый мир? Текущая постройка будет сброшена.")){blocks.splice(0).forEach(b=>b.dispose());addStarterBuild();localStorage.removeItem("miniSandboxWorld");setStatus("Новый мир создан");closeHub();}}
+    if(material){selectMaterial(material);closeHub();}
+  });
+
   document.getElementById("saveBtn").addEventListener("click", saveWorld);
   document.getElementById("resetBtn").addEventListener("click", () => {
     if (!confirm("Удалить постройки и вернуть начальный мир?")) return;
