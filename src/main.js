@@ -252,6 +252,76 @@ import { importGlbFile } from "./assetLibrary.js";
   document.getElementById("undoBtn").addEventListener("click",undoAction);
   document.getElementById("redoBtn").addEventListener("click",redoAction);
   window.addEventListener("keydown",e=>{if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==="z"){e.preventDefault();undoAction();}if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==="y"){e.preventDefault();redoAction();}});
+  function currentWorldPayload() {
+    return { format: "mini-sandbox-world", version: 1, createdAt: new Date().toISOString(), blocks: blocks.map(b => ({ x:b.position.x, y:b.position.y, z:b.position.z, material:b.metadata.materialName })) };
+  }
+  function encodeWorldForUrl(payload) {
+    const bytes = new TextEncoder().encode(JSON.stringify(payload));
+    let binary = "";
+    bytes.forEach(byte => binary += String.fromCharCode(byte));
+    return btoa(binary).replace(/\\+/g, "-").replace(/\\//g, "_").replace(/=+$/g, "");
+  }
+  function decodeWorldFromUrl(value) {
+    const base64 = value.replace(/-/g, "+").replace(/_/g, "/");
+    const binary = atob(base64 + "=".repeat((4 - base64.length % 4) % 4));
+    const bytes = Uint8Array.from(binary, char => char.charCodeAt(0));
+    return JSON.parse(new TextDecoder().decode(bytes));
+  }
+  async function shareWorld() {
+    const payload = currentWorldPayload();
+    if (payload.blocks.length > 1800) { setStatus("Мир большой для ссылки — используй экспорт JSON"); return; }
+    const url = new URL(location.href);
+    url.hash = "world=" + encodeWorldForUrl(payload);
+    try {
+      if (navigator.share) await navigator.share({ title: "Мой мир MINI SANDBOX 3D", text: "Посмотри мою постройку!", url: url.href });
+      else { await navigator.clipboard.writeText(url.href); setStatus("Ссылка на мир скопирована"); }
+    } catch (error) {
+      if (error.name !== "AbortError") setStatus("Не удалось поделиться ссылкой — попробуй экспорт JSON");
+    }
+  }
+  function loadSharedWorldFromUrl() {
+    const match = location.hash.match(/(?:^#|&)world=([^&]+)/);
+    if (!match) return false;
+    try {
+      const payload = decodeWorldFromUrl(match[1]);
+      const data = Array.isArray(payload) ? payload : payload.blocks;
+      if (!Array.isArray(data) || data.length > 10000) throw new Error("Неверный формат");
+      const safe = data.filter(b => b && [b.x,b.y,b.z].every(v => Number.isFinite(Number(v)) && Math.abs(Number(v)) <= 500) && Math.abs(Number(b.y)) <= 200)
+        .map(b => ({x:Number(b.x),y:Number(b.y),z:Number(b.z),material:colors[b.material]?b.material:"grass"}));
+      blocks.splice(0).forEach(b => b.dispose());
+      safe.forEach(b => makeBlock(b.x,b.y,b.z,b.material));
+      history.replaceState(null, "", location.pathname + location.search);
+      setStatus("Загружен мир по ссылке: " + safe.length + " блоков");
+      return true;
+    } catch (error) {
+      setStatus("Ссылка на мир повреждена или устарела");
+      history.replaceState(null, "", location.pathname + location.search);
+      return false;
+    }
+  }
+  document.getElementById("shareWorldBtn").addEventListener("click", shareWorld);
+  async function checkForUpdates() {
+    const feed = document.getElementById("updateFeed");
+    if (!feed) return;
+    try {
+      const response = await fetch("./version.json", { cache: "no-store" });
+      if (!response.ok) throw new Error("Не удалось получить версию");
+      const info = await response.json();
+      feed.innerHTML = "";
+      const heading = document.createElement("strong");
+      heading.textContent = "Версия " + (info.version || "—");
+      const summary = document.createElement("p");
+      summary.textContent = info.summary || "Обновления MINI SANDBOX 3D";
+      const list = document.createElement("ul");
+      (Array.isArray(info.changes) ? info.changes : []).slice(0, 5).forEach(change => {
+        const item = document.createElement("li"); item.textContent = change; list.append(item);
+      });
+      feed.append(heading, summary, list);
+    } catch {
+      feed.textContent = "Лента обновлений временно недоступна.";
+    }
+  }
+
   function exportWorldFile() {
     const payload={format:"mini-sandbox-world",version:1,createdAt:new Date().toISOString(),blocks:blocks.map(b=>({x:b.position.x,y:b.position.y,z:b.position.z,material:b.metadata.materialName}))};
     const url=URL.createObjectURL(new Blob([JSON.stringify(payload,null,2)],{type:"application/json"}));
@@ -304,7 +374,7 @@ import { importGlbFile } from "./assetLibrary.js";
     hubTabs.forEach(b=>b.classList.toggle("active",b.dataset.hubTab===tab));
     const titles={home:"Главное меню",worlds:"Мои миры",shop:"Магазин",settings:"Настройки"};
     hubTitle.textContent=titles[tab]||titles.home;
-    if(tab==="home") hubContent.innerHTML=`<div class="hub-hero"><div class="hub-hero-main"><h3>Твой мир. Твои правила.</h3><p>Строй, исследуй и создавай собственные пространства вместе с друзьями.</p><button class="hub-primary" data-hub-action="resume">▶ Продолжить игру</button></div><div class="hub-side-card"><div class="hub-stat"><span>Режим</span><b>Creative</b></div><div class="hub-stat"><span>Материалы</span><b>6 видов</b></div><div class="hub-stat"><span>Сохранение</span><b>На устройстве</b></div><button class="hub-secondary" data-hub-action="worlds">Открыть мои миры</button></div></div>`;
+    if(tab==="home") hubContent.innerHTML=`<div class="hub-hero"><div class="hub-hero-main"><h3>Твой мир. Твои правила.</h3><p>Строй, исследуй и создавай собственные пространства вместе с друзьями.</p><button class="hub-primary" data-hub-action="resume">▶ Продолжить игру</button></div><div class="hub-side-card"><div class="hub-stat"><span>Режим</span><b>Creative</b></div><div class="hub-stat"><span>Материалы</span><b>6 видов</b></div><div class="hub-stat"><span>Сохранение</span><b>На устройстве</b></div><button class="hub-secondary" data-hub-action="worlds">Открыть мои миры</button></div></div><section class="update-feed"><h3>Последние обновления</h3><div id="updateFeed">Проверяем версию…</div><a href="https://github.com/olgakolina71-pixel/Sandbox3d/issues" target="_blank" rel="noopener">Сообщить об ошибке / предложить идею ↗</a></section>`;
     if(tab==="worlds") hubContent.innerHTML=`<div class="hub-card-grid"><article class="hub-card"><div class="hub-card-art"></div><h3>Мой мир</h3><p>Локальное сохранение на этом устройстве</p><button class="hub-secondary" data-hub-action="load">Загрузить мир</button></article><article class="hub-card"><div class="hub-card-art" style="background:linear-gradient(135deg,#6c8ea8,#263f62)"></div><h3>Новый мир</h3><p>Начать чистую творческую площадку</p><button class="hub-secondary" data-hub-action="new">Создать мир</button></article></div>`;
     if(tab==="shop") hubContent.innerHTML=`<div class="hub-card-grid"><article class="hub-card"><div class="hub-card-art" style="background:linear-gradient(135deg,#6eaa5a,#315b3b)"></div><h3>Nature Pack</h3><p>Трава и природные оттенки</p><button class="hub-secondary" data-store-material="grass">Выбрать</button></article><article class="hub-card"><div class="hub-card-art" style="background:linear-gradient(135deg,#aab8c7,#566577)"></div><h3>Stoneworks</h3><p>Камень для крепостей и дорог</p><button class="hub-secondary" data-store-material="stone">Выбрать</button></article><article class="hub-card"><div class="hub-card-art" style="background:linear-gradient(135deg,#f4d078,#8f5b35)"></div><h3>Woodland</h3><p>Тёплые деревянные блоки</p><button class="hub-secondary" data-store-material="wood">Выбрать</button></article><article class="hub-card"><div class="hub-card-art" style="background:linear-gradient(135deg,#e5c98c,#a47d4e)"></div><h3>Desert</h3><p>Песочные материалы</p><button class="hub-secondary" data-store-material="sand">Выбрать</button></article><article class="hub-card"><div class="hub-card-art" style="background:linear-gradient(135deg,#dc8d75,#783e39)"></div><h3>Brick Set</h3><p>Кирпич для построек</p><button class="hub-secondary" data-store-material="brick">Выбрать</button></article><article class="hub-card"><div class="hub-card-art" style="background:linear-gradient(135deg,#adfff0,#0b9e86)"></div><h3>Neon Lab</h3><p>Светящиеся акценты</p><button class="hub-secondary" data-store-material="neon">Выбрать</button></article></div><p style="margin:12px 2px 0;color:#829ab6;font-size:10px">Это бесплатная витрина материалов — покупки и платежи не подключены.</p>`;
     if(tab==="settings") hubContent.innerHTML=`<div class="hub-setting"><div>Скорость движения<small>Регулирует скорость игрока</small></div><b id="speedValue">0.28</b><input id="speedRange" type="range" min="0.12" max="0.65" step="0.01" value="0.28"></div><div class="hub-setting"><div>Угол обзора<small>Ширина обзора камеры</small></div><b id="fovValue">0.80</b><input id="fovRange" type="range" min="0.55" max="1.25" step="0.01" value="0.80"></div><div class="hub-setting"><div>Качество рендера<small>Баланс качества и производительности</small></div><select id="qualitySelect" style="background:#102338;color:#eaf5ff;border:1px solid #ffffff22;border-radius:8px;padding:8px"><option value="1">Высокое</option><option value="1.5">Сбалансированное</option><option value="2">Производительность</option></select></div>`;
@@ -340,7 +410,7 @@ import { importGlbFile } from "./assetLibrary.js";
     localStorage.removeItem("miniSandboxWorld");
     addStarterBuild(); setStatus("Мир сброшен");
   });
-  if (loadWorld()) setStatus("Сохранённый мир загружен");
+  if (!loadSharedWorldFromUrl() && loadWorld()) setStatus("Сохранённый мир загружен");
 
   let previousFrame = performance.now();
   engine.runRenderLoop(() => {
