@@ -51,3 +51,10 @@ npm run preview
 - Mobile controls use touch-safe pointer handling and safe-area spacing.
 - Bug reports and feature requests go to the public [GitHub Issues](https://github.com/olgakolina71-pixel/Sandbox3d/issues) page.
 - The update feed is a static release note file; automatic in-game updates are not installed.
+
+
+## MINI SANDBOX 3D NEXT GEN (Phase 1)
+- Game mode and Studio mode switch with a compact responsive control.
+- MiniScript v1 playground: `block x y z material`, `clear`, and `say text`.
+- Verity uses the server endpoint `POST /api/verity`; configure the Cloudflare Pages secret `OPENAI_API_KEY` to enable live AI responses. The key is never exposed to the browser.
+- SEO metadata, Open Graph tags, canonical URL, VideoGame structured data, robots.txt and sitemap.xml.
