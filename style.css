@@ -182,3 +182,7 @@ body.play-mode .panel,body.play-mode .hotbar,body.play-mode .mobile-controls .lo
 .script-workbench textarea{display:block;width:100%;min-height:120px;resize:vertical;border:1px solid #ffffff22;border-radius:9px;background:#071321;color:#d5f7e8;padding:9px;font:10px/1.5 ui-monospace,monospace}
 .script-workbench button{width:100%;margin-top:8px;border:1px solid #72eac066;border-radius:9px;background:#1d5949;color:#e1fff3;padding:9px;font-size:10px;font-weight:800}.script-workbench pre{max-height:80px;overflow:auto;white-space:pre-wrap;color:#9eb6ca;font:9px/1.5 ui-monospace,monospace}
 @media(max-width:700px){.top-actions .mode-button{padding:7px 7px;font-size:9px}.top-actions .hub-nav{display:none}.script-workbench textarea{min-height:100px}}
+
+.brand-copy h1{margin:0;font:inherit;color:#fff;font-size:inherit;letter-spacing:inherit}
+.panel{max-height:calc(100dvh - 112px);overflow:auto;overscroll-behavior:contain}
+@media(max-width:700px){.top-actions #resetBtn{display:none}.panel{max-height:calc(100dvh - 82px)}}
