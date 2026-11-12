@@ -188,3 +188,5 @@ body{background:#091321}
 #game[data-app-mode="game"] .panel,#game[data-app-mode="game"] .hotbar{display:none}
 #game[data-app-mode="game"] .status{bottom:25px}
 @media(max-width:700px){.nextgen-switch{top:66px;padding:4px}.nextgen-switch button{padding:9px 12px;font-size:10px}.nextgen-studio{right:10px;bottom:145px;width:calc(100vw - 20px)}#game[data-app-mode="game"] .mobile-controls{display:block}}
+
+.brand-copy{margin:0}.seo-info{position:absolute;z-index:2;left:22px;bottom:18px;max-width:min(340px,calc(100vw - 44px));color:#9db1c9;font-size:10px}.seo-info summary{cursor:pointer;color:#9fe8d0;font-weight:800}.seo-info p{max-height:120px;overflow:auto;margin:7px 0 0;padding:10px;border:1px solid #ffffff20;border-radius:10px;background:rgba(8,18,31,.94);line-height:1.55}@media(max-width:700px){.seo-info{left:10px;bottom:65px;max-width:180px;font-size:9px}.seo-info p{max-height:100px}}
