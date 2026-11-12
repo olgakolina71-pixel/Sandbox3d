@@ -399,7 +399,8 @@ import { runSandScript } from "./sandScript.js";
       quality.addEventListener("change",()=>engine.setHardwareScalingLevel(Number(quality.value)));
     }
   }
-  hubTabs.forEach(b=>b.addEventListener("click",()=>showHubTab(b.dataset.hubTab)));\n  const savedSkin=localStorage.getItem("sandboxSkin")||"default";document.documentElement.dataset.skin=savedSkin;
+  hubTabs.forEach(b=>b.addEventListener("click",()=>showHubTab(b.dataset.hubTab)));
+  const savedSkin=localStorage.getItem("sandboxSkin")||"default";document.documentElement.dataset.skin=savedSkin;
   document.querySelectorAll("[data-hub-close]").forEach(b=>b.addEventListener("click",closeHub));
   document.getElementById("menuBtn").addEventListener("click",()=>openHub("home"));
   document.getElementById("worldsBtn").addEventListener("click",()=>openHub("worlds"));
@@ -412,7 +413,8 @@ import { runSandScript } from "./sandScript.js";
     const skin=e.target.closest("[data-skin-choice]")?.dataset.skinChoice;
     if(skin){localStorage.setItem("sandboxSkin",skin);document.documentElement.dataset.skin=skin;showHubTab("skins");setStatus("Скин выбран: "+skin);}
     if(action==="resume") closeHub();
-    if(action==="skins") showHubTab("skins");\n    if(action==="play"){setAppMode("play");closeHub()}\n    if(action==="studio"){setAppMode("studio");closeHub()}
+    if(action==="skins") showHubTab("skins");
+    if(action==="play"){setAppMode("play");closeHub()}\n    if(action==="studio"){setAppMode("studio");closeHub()}
     if(action==="worlds") showHubTab("worlds");
     if(action==="load"){if(loadWorld())setStatus("Мир загружен");else setStatus("Сохранённого мира пока нет");closeHub();}
     if(action==="new"){if(confirm("Создать новый мир? Текущая постройка будет сброшена.")){blocks.splice(0).forEach(b=>b.dispose());addStarterBuild();localStorage.removeItem("miniSandboxWorld");setStatus("Новый мир создан");closeHub();}}
