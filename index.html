@@ -13,6 +13,7 @@
     <header class="topbar">
       <a class="brand" href="./">MINI <span>SANDBOX</span></a>
       <div class="top-actions">
+        <button id="roomToggle" class="ui-button room-toggle" type="button">🌐 Мультиплеер</button>
         <button id="verityToggle" class="ui-button verity-toggle" type="button">☺ Верити</button>
         <button id="saveBtn" class="ui-button">Сохранить</button>
         <button id="resetBtn" class="ui-button danger">Сбросить</button>
@@ -35,6 +36,16 @@
       </div>
       <div class="hint">ЛКМ — действие · WASD — движение · Space — прыжок</div>
     </aside>
+    <section id="roomPanel" class="room-panel" aria-label="Мультиплеер">
+      <div class="room-header"><strong>Сетевая игра</strong><button id="roomClose" type="button" aria-label="Закрыть">×</button></div>
+      <label>Имя игрока<input id="playerName" maxlength="18" value="Игрок" /></label>
+      <label>Комната<input id="roomName" maxlength="24" value="main" /></label>
+      <button id="roomJoin" class="room-join" type="button">Подключиться</button>
+      <div id="roomStatus" class="room-status">Не подключено</div>
+      <div id="playerList" class="player-list">Игроков: 0</div>
+      <div id="roomChat" class="room-chat" aria-live="polite"></div>
+      <form id="roomChatForm" class="room-chat-form"><input id="roomChatInput" maxlength="160" placeholder="Сообщение в чат..." aria-label="Сообщение в комнату" /><button type="submit">➤</button></form>
+    </section>
     <section id="verityPanel" class="verity-panel" aria-label="Чат с Верити">
       <div class="verity-header">
         <div class="verity-avatar">☺</div>
